@@ -1,0 +1,9 @@
+{
+  "appId": "com.wahyu.cekpaket",
+  "appName": "Cek Paket",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
