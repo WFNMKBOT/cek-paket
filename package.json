@@ -1,0 +1,14 @@
+{
+  "name": "cek-paket",
+  "version": "1.0.0",
+  "description": "Cek Ongkir & Lacak Resi Cepat - Wahyu Firman Nugraha",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Static build ready'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}
