@@ -1,0 +1,84 @@
+name: Build & Release Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Kode
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Inject App Version
+        run: |
+          sed -i "s/__APP_VERSION__/v1.0.${{ github.run_number }}/g" www/index.html
+
+      - name: Install Dependencies & Generate Android Project
+        run: |
+          npm install
+          npm install -D @capacitor/assets
+          npx cap add android
+          
+          mkdir -p assets
+          IMG_FILE=$(find . -maxdepth 3 -not -path '*/.*' -not -path './android/*' -not -path './node_modules/*' \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) | head -n 1)
+          if [ -n "$IMG_FILE" ]; then
+            pip install pillow -q
+            python3 -c "from PIL import Image; img = Image.open('$IMG_FILE').convert('RGBA'); img.save('assets/icon.png'); img.save('assets/icon-only.png')"
+            npx capacitor-assets generate --android --iconBackgroundColor '#06090e' --splashBackgroundColor '#06090e'
+            rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          fi
+          npx cap sync
+
+      - name: Decode Keystore Permanen & Naikkan VersionCode
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 -d > android/app/release.keystore || true
+          fi
+          if [ ! -s android/app/release.keystore ]; then
+            rm -f android/app/release.keystore
+            keytool -genkey -v -keystore android/app/release.keystore -alias wadirect -keyalg RSA -keysize 2048 -validity 10000 -storepass wadirect123 -keypass wadirect123 -dname "CN=Wahyu Firman Nugraha, O=WFN, L=Tangerang, S=Banten, C=ID"
+          fi
+          sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/g" android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "1.0.${{ github.run_number }}"/g' android/app/build.gradle
+
+      - name: Build Signed Release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$PWD/app/release.keystore \
+            -Pandroid.injected.signing.store.password=wadirect123 \
+            -Pandroid.injected.signing.key.alias=wadirect \
+            -Pandroid.injected.signing.key.password=wadirect123
+
+      - name: Rename APK
+        run: |
+          mv android/app/build/outputs/apk/release/app-release.apk Cek-Paket.apk
+
+      - name: Publish ke GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Cek Paket v1.0.${{ github.run_number }}
+          body: |
+            Rilis resmi aplikasi **Cek Paket** (Build #${{ github.run_number }}).
+            100% Gratis tanpa batas kuota — Lacak Resi & Cek Ongkir Cepat.
+          files: Cek-Paket.apk
