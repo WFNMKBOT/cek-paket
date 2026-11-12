@@ -70,6 +70,7 @@
         <div class="truncate">
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-[17px] tracking-tight text-white">Cek Paket</h1>
+          
           </div>
           <p class="text-xs text-slate-400 mt-0.5 truncate">Lacak resi & tarif ongkir se-Indonesia</p>
         </div>
@@ -129,7 +130,7 @@
       </button>
     </div>
 
-    <!-- ==================== PANEL 1: LACAK RESI ==================== -->
+    <!-- ==================== PANEL 1: LACAK RESI (IN-APP RESULT) ==================== -->
     <div id="panelResi" class="space-y-6">
       <div class="glass-card border border-white/[0.08] rounded-3xl p-5 space-y-5">
         
@@ -223,17 +224,70 @@
 
         <button 
           type="button"
+          id="trackBtn"
           onclick="trackPackage()" 
           class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 px-6 rounded-2xl shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-[14px]"
         >
-          <span>Lacak Paket Sekarang</span>
-          <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <span id="trackBtnText">Lacak Paket Sekarang</span>
+          <svg id="trackBtnIcon" class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
         </button>
       </div>
 
+      <!-- HASIL LACAK PAKET LANGSUNG DI DALAM APK -->
+      <div id="trackingResultSection" class="hidden glass-card border border-amber-500/25 rounded-3xl p-5 space-y-4">
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span id="resCourierBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/25">J&T Express</span>
+              <span id="resStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Memuat...</span>
+            </div>
+            <p id="resResiTitle" class="font-mono text-sm font-bold text-white mt-1.5 tracking-wide truncate">JP1234567890</p>
+            <p id="resLabelSubtitle" class="hidden text-xs text-slate-400 mt-0.5 truncate"></p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="copyTrackingResult()" class="text-xs font-semibold text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1.5 rounded-xl flex items-center gap-1 active:scale-95 transition">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Salin</span>
+            </button>
+            <button type="button" onclick="closeTrackingResult()" class="w-8 h-8 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-400 hover:text-white flex items-center justify-center transition">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="trackingLoading" class="hidden py-8 flex flex-col items-center justify-center text-center space-y-2.5">
+          <div class="w-7 h-7 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+          <p class="text-xs text-slate-300 font-medium">Mengambil riwayat perjalanan paket...</p>
+        </div>
+
+        <!-- Timeline Riwayat Pengiriman -->
+        <div id="trackingTimelineContainer" class="hidden space-y-3">
+          <div id="trackingSummaryBox" class="bg-[#070a10] border border-white/[0.06] rounded-2xl p-3 text-xs space-y-1"></div>
+          <div id="trackingTimelineList" class="relative pl-4 border-l-2 border-amber-500/30 space-y-4 ml-1.5 py-1"></div>
+        </div>
+
+        <!-- Mode Tampilan Web Ekspedisi Di Dalam APK (Jika API Ekspedisi Butuh Captcha / Fallback) -->
+        <div id="inAppWebViewerContainer" class="hidden space-y-2.5">
+          <div class="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2 text-[11px] text-amber-200">
+            <span>Menampilkan halaman resmi kurir langsung di dalam APK (Nomor resi sudah disalin, tinggal tempel jika diminta)</span>
+          </div>
+          <div class="w-full h-[460px] rounded-2xl overflow-hidden border border-white/10 bg-white">
+            <iframe id="inAppTrackingFrame" src="about:blank" class="w-full h-full border-0" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Riwayat Resi Tersimpan -->
       <div class="space-y-3">
         <div class="flex items-center justify-between px-1">
           <div class="flex items-center gap-2">
@@ -253,11 +307,10 @@
     <div id="panelOngkir" class="hidden space-y-5">
       <div class="glass-card border border-white/[0.08] rounded-3xl p-5 space-y-4">
         
-        <!-- Input Kota/Kecamatan Asal -->
         <div class="relative">
           <div class="flex justify-between items-center mb-2">
             <label for="originCity" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Kecamatan / Kota Asal</label>
-            <span id="wilayahStatusBadge" class="text-[10px] text-emerald-400">Kota & Kecamatan ID</span>
+            <span class="text-[10px] text-emerald-400">Kota & Kecamatan ID</span>
           </div>
           <input 
             type="text" 
@@ -271,7 +324,6 @@
           <div id="originDropdown" class="hidden absolute left-0 right-0 top-[76px] z-30 max-h-56 overflow-y-auto bg-[#0f1623] border border-white/15 rounded-2xl shadow-2xl divide-y divide-white/[0.05]"></div>
         </div>
 
-        <!-- Tombol Tukar Asal <-> Tujuan -->
         <div class="flex justify-center -my-1">
           <button type="button" onclick="swapCities()" class="w-8 h-8 rounded-full bg-white/[0.05] hover:bg-amber-500/20 border border-white/[0.08] text-slate-400 hover:text-amber-400 flex items-center justify-center transition active:scale-90" title="Tukar Asal & Tujuan">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -283,7 +335,6 @@
           </button>
         </div>
 
-        <!-- Input Kota/Kecamatan Tujuan -->
         <div class="relative">
           <label for="destCity" class="block text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Kecamatan / Kota Tujuan</label>
           <input 
@@ -350,15 +401,6 @@
         </div>
 
         <div id="ongkirList" class="space-y-2.5"></div>
-
-        <div class="bg-[#0d121c]/80 border border-white/[0.06] rounded-2xl p-3.5 space-y-2">
-          <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Verifikasi Web Resmi Ekspedisi:</p>
-          <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
-            <button type="button" onclick="openOfficialRate('https://jet.co.id/rates')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">J&T</button>
-            <button type="button" onclick="openOfficialRate('https://www.jne.co.id/id/tracking/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">JNE</button>
-            <button type="button" onclick="openOfficialRate('https://www.sicepat.com/deliveryFee')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">SiCepat</button>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -368,7 +410,7 @@
   <footer class="py-5 px-5 text-center border-t border-white/[0.04]">
     <button type="button" onclick="openInfoModal()" class="inline-flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 transition">
       <span>Developed by</span>
-      <span class="font-semibold text-amber-400/90">WFN</span>
+      <span class="font-semibold text-amber-400/90">Wahyu Firman Nugraha</span>
       <span class="text-slate-600">•</span>
       <span class="underline decoration-slate-700 underline-offset-2">Info APK</span>
     </button>
@@ -393,7 +435,7 @@
               <h3 class="font-bold text-base text-white">Cek Paket</h3>
               
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">Lacak Resi & Cek Ongkir Se-Indonesia</p>
+            <p class="text-xs text-slate-400 mt-0.5">Lacak Resi & Cek Ongkir In-App</p>
           </div>
         </div>
         <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition">
@@ -405,7 +447,7 @@
       </div>
 
       <p class="text-xs leading-relaxed text-slate-300">
-        Aplikasi pelacakan resi dan pengecekan ongkos kirim seluruh kota & kecamatan di Indonesia tanpa batas kuota harian dan bebas iklan.
+        Aplikasi pelacakan resi dan pengecekan ongkos kirim seluruh kota & kecamatan di Indonesia 100% di dalam aplikasi tanpa keluar ke browser.
       </p>
 
       <div class="bg-[#070a10] border border-white/[0.07] rounded-2xl p-4 space-y-3 text-xs">
@@ -447,19 +489,18 @@
     const CURRENT_VERSION = '__APP_VERSION__';
 
     const COURIERS = {
-      jnt: { name: 'J&T Express', url: (r) => `https://jet.co.id/track?bills=${r}` },
-      jne: { name: 'JNE Express', url: () => `https://www.jne.co.id/id/tracking/trace` },
-      spx: { name: 'SPX Express', url: (r) => `https://spx.co.id/detail/${r}` },
-      sicepat: { name: 'SiCepat', url: (r) => `https://www.sicepat.com/checkAwb?awb=${r}` },
-      anteraja: { name: 'Anteraja', url: (r) => `https://anteraja.id/tracking?awb=${r}` },
-      pos: { name: 'POS Indonesia', url: (r) => `https://www.posindonesia.co.id/id/tracking/${r}` },
-      ninja: { name: 'Ninja Xpress', url: (r) => `https://www.ninjaxpress.co/id-id/tracking?id=${r}` },
-      lion: { name: 'Lion Parcel', url: (r) => `https://lionparcel.com/track/stt?q=${r}` },
-      idexpress: { name: 'ID Express', url: (r) => `https://idexpress.com/tracking?waybillNo=${r}` },
-      tiki: { name: 'TIKI', url: () => `https://www.tiki.id/id/tracking` }
+      jnt: { name: 'J&T Express', code: 'jnt', url: (r) => `https://jet.co.id/track?bills=${r}` },
+      jne: { name: 'JNE Express', code: 'jne', url: () => `https://www.jne.co.id/id/tracking/trace` },
+      spx: { name: 'SPX Express', code: 'spx', url: (r) => `https://spx.co.id/detail/${r}` },
+      sicepat: { name: 'SiCepat', code: 'sicepat', url: (r) => `https://www.sicepat.com/checkAwb?awb=${r}` },
+      anteraja: { name: 'Anteraja', code: 'anteraja', url: (r) => `https://anteraja.id/tracking?awb=${r}` },
+      pos: { name: 'POS Indonesia', code: 'pos', url: (r) => `https://www.posindonesia.co.id/id/tracking/${r}` },
+      ninja: { name: 'Ninja Xpress', code: 'ninja', url: (r) => `https://www.ninjaxpress.co/id-id/tracking?id=${r}` },
+      lion: { name: 'Lion Parcel', code: 'lion', url: (r) => `https://lionparcel.com/track/stt?q=${r}` },
+      idexpress: { name: 'ID Express', code: 'ide', url: (r) => `https://idexpress.com/tracking?waybillNo=${r}` },
+      tiki: { name: 'TIKI', code: 'tiki', url: () => `https://www.tiki.id/id/tracking` }
     };
 
-    // ==================== DATABASE LOKAL + KECAMATAN UTAMA SE-INDONESIA ====================
     const INDONESIA_ZONES = [
       {
         zone: 'JABODETABEK',
@@ -471,14 +512,7 @@
           'Cikupa, Kab. Tangerang', 'Balaraja, Kab. Tangerang', 'Curug, Kab. Tangerang', 'Kelapa Dua / Gading Serpong', 'Pasar Kemis, Kab. Tangerang', 'Tigaraksa, Kab. Tangerang', 'Kosambi, Kab. Tangerang', 'Teluknaga, Kab. Tangerang', 'Sepatan, Kab. Tangerang', 'Rajeg, Kab. Tangerang', 'Legok, Kab. Tangerang', 'Pagedangan, Kab. Tangerang', 'Cisauk, Kab. Tangerang', 'Panongan, Kab. Tangerang', 'Sindang Jaya, Kab. Tangerang', 'Mauk, Kab. Tangerang', 'Kronjo, Kab. Tangerang', 'Kresek, Kab. Tangerang', 'Solear, Kab. Tangerang', 'Jayanti, Kab. Tangerang', 'Jambe, Kab. Tangerang', 'Kemiri, Kab. Tangerang', 'Sukadiri, Kab. Tangerang', 'Sukamulya, Kab. Tangerang',
           'Kota Serang', 'Kabupaten Serang', 'Kota Cilegon', 'Kabupaten Pandeglang', 'Kabupaten Lebak', 'Rangkasbitung',
           'Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat', 'Jakarta Timur', 'Jakarta Utara', 'Kepulauan Seribu',
-          'Tanah Abang, Jakarta Pusat', 'Menteng, Jakarta Pusat', 'Gambir, Jakarta Pusat', 'Kemayoran, Jakarta Pusat', 'Senen, Jakarta Pusat', 'Cempaka Putih, Jakarta Pusat',
-          'Kebayoran Baru, Jakarta Selatan', 'Kebayoran Lama, Jakarta Selatan', 'Tebet, Jakarta Selatan', 'Setiabudi, Jakarta Selatan', 'Pasar Minggu, Jakarta Selatan', 'Cilandak, Jakarta Selatan', 'Jagakarsa, Jakarta Selatan', 'Mampang Prapatan, Jakarta Selatan', 'Pancoran, Jakarta Selatan', 'Pesanggrahan, Jakarta Selatan',
-          'Cengkareng, Jakarta Barat', 'Grogol Petamburan, Jakarta Barat', 'Kalideres, Jakarta Barat', 'Kebon Jeruk, Jakarta Barat', 'Kembangan, Jakarta Barat', 'Palmerah, Jakarta Barat', 'Taman Sari, Jakarta Barat', 'Tambora, Jakarta Barat',
-          'Cakung, Jakarta Timur', 'Cipayung, Jakarta Timur', 'Ciracas, Jakarta Timur', 'Duren Sawit, Jakarta Timur', 'Jatinegara, Jakarta Timur', 'Kramat Jati, Jakarta Timur', 'Makasar, Jakarta Timur', 'Matraman, Jakarta Timur', 'Pasar Rebo, Jakarta Timur', 'Pulo Gadung, Jakarta Timur',
-          'Cilincing, Jakarta Utara', 'Kelapa Gading, Jakarta Utara', 'Koja, Jakarta Utara', 'Pademangan, Jakarta Utara', 'Penjaringan, Jakarta Utara', 'Tanjung Priok, Jakarta Utara',
-          'Kota Bogor', 'Kabupaten Bogor', 'Cibinong, Bogor', 'Gunung Putri, Bogor', 'Cileungsi, Bogor', 'Bojonggede, Bogor', 'Parung, Bogor', 'Sentul, Bogor',
-          'Kota Depok', 'Beji, Depok', 'Cimanggis, Depok', 'Sawangan, Depok', 'Pancoran Mas, Depok', 'Sukmajaya, Depok', 'Cinere, Depok',
-          'Kota Bekasi', 'Kabupaten Bekasi', 'Cikarang, Bekasi', 'Tambun, Bekasi', 'Cibitung, Bekasi', 'Pondok Gede, Bekasi', 'Jatiasih, Bekasi', 'Bekasi Barat', 'Bekasi Timur', 'Bekasi Utara', 'Bekasi Selatan'
+          'Kota Bogor', 'Kabupaten Bogor', 'Cibinong, Bogor', 'Kota Depok', 'Kota Bekasi', 'Kabupaten Bekasi', 'Cikarang, Bekasi'
         ]
       },
       {
@@ -486,47 +520,36 @@
         prov: 'Jawa Barat',
         cities: [
           'Kota Bandung', 'Kabupaten Bandung', 'Bandung Barat', 'Kota Cimahi', 'Kabupaten Sumedang',
-          'Ujung Berung, Kota Bandung', 'Cibiru, Kota Bandung', 'Antapani, Kota Bandung', 'Arcamanik, Kota Bandung', 'Gedebage, Kota Bandung', 'Buahbatu, Kota Bandung', 'Kiaracondong, Kota Bandung', 'Coblong, Kota Bandung', 'Sukasari, Kota Bandung', 'Cicendo, Kota Bandung', 'Andir, Kota Bandung', 'Astanaanyar, Kota Bandung', 'Bojongloa Kaler, Kota Bandung', 'Bojongloa Kidul, Kota Bandung', 'Babakan Ciparay, Kota Bandung', 'Bandung Kulon, Kota Bandung', 'Bandung Wetan, Kota Bandung', 'Batununggal, Kota Bandung', 'Cibeunying Kaler, Kota Bandung', 'Cibeunying Kidul, Kota Bandung', 'Cidadap, Kota Bandung', 'Cinambo, Kota Bandung', 'Lengkong, Kota Bandung', 'Mandalajati, Kota Bandung', 'Panyileukan, Kota Bandung', 'Rancasari, Kota Bandung', 'Regol, Kota Bandung', 'Sukajadi, Kota Bandung', 'Sumur Bandung, Kota Bandung',
-          'Lembang, Bandung Barat', 'Padalarang, Bandung Barat', 'Ngamprah, Bandung Barat', 'Cisarua, Bandung Barat',
-          'Soreang, Kab. Bandung', 'Baleendah, Kab. Bandung', 'Dayeuhkolot, Kab. Bandung', 'Bojongsoang, Kab. Bandung', 'Cileunyi, Kab. Bandung', 'Rancaekek, Kab. Bandung', 'Majalaya, Kab. Bandung', 'Banjaran, Kab. Bandung', 'Margahayu, Kab. Bandung', 'Katapang, Kab. Bandung',
-          'Jatinangor, Sumedang', 'Tanjungsari, Sumedang',
-          'Kabupaten Karawang', 'Cikampek, Karawang', 'Klari, Karawang', 'Telukjambe, Karawang',
-          'Kabupaten Purwakarta', 'Kabupaten Subang',
-          'Kota Sukabumi', 'Kabupaten Sukabumi', 'Cibadak, Sukabumi', 'Cicurug, Sukabumi', 'Pelabuhanratu, Sukabumi',
-          'Kabupaten Cianjur', 'Cipanas, Cianjur',
-          'Kota Cirebon', 'Kabupaten Cirebon', 'Sumber, Cirebon', 'Kedawung, Cirebon', 'Palimanan, Cirebon',
-          'Kabupaten Indramayu', 'Jatibarang, Indramayu', 'Kabupaten Majalengka', 'Kadipaten, Majalengka', 'Kabupaten Kuningan',
-          'Kabupaten Garut', 'Tarogong, Garut', 'Kota Tasikmalaya', 'Kabupaten Tasikmalaya', 'Singaparna, Tasikmalaya', 'Kabupaten Ciamis', 'Kota Banjar', 'Kabupaten Pangandaran'
+          'Ujung Berung, Kota Bandung', 'Cibiru, Kota Bandung', 'Antapani, Kota Bandung', 'Arcamanik, Kota Bandung', 'Gedebage, Kota Bandung', 'Buahbatu, Kota Bandung', 'Kiaracondong, Kota Bandung', 'Coblong, Kota Bandung', 'Sukasari, Kota Bandung', 'Cicendo, Kota Bandung', 'Lembang, Bandung Barat', 'Padalarang, Bandung Barat', 'Soreang, Kab. Bandung', 'Baleendah, Kab. Bandung', 'Cileunyi, Kab. Bandung', 'Rancaekek, Kab. Bandung', 'Jatinangor, Sumedang',
+          'Kabupaten Karawang', 'Cikampek, Karawang', 'Kabupaten Purwakarta', 'Kabupaten Subang',
+          'Kota Sukabumi', 'Kabupaten Sukabumi', 'Kabupaten Cianjur',
+          'Kota Cirebon', 'Kabupaten Cirebon', 'Kabupaten Indramayu', 'Kabupaten Majalengka', 'Kabupaten Kuningan',
+          'Kabupaten Garut', 'Kota Tasikmalaya', 'Kabupaten Tasikmalaya', 'Kabupaten Ciamis', 'Kota Banjar', 'Kabupaten Pangandaran'
         ]
       },
       {
         zone: 'JATENG',
         prov: 'Jawa Tengah & DIY',
         cities: [
-          'Kota Semarang', 'Kabupaten Semarang', 'Ungaran', 'Banyumanik, Semarang', 'Tembalang, Semarang', 'Pedurungan, Semarang', 'Ngaliyan, Semarang', 'Genuk, Semarang',
-          'Kota Salatiga', 'Kabupaten Kendal', 'Kaliwungu, Kendal', 'Weleri, Kendal', 'Kabupaten Demak', 'Mranggen, Demak', 'Kabupaten Grobogan', 'Purwodadi',
-          'Kota Surakarta (Solo)', 'Laweyan, Solo', 'Banjarsari, Solo', 'Jebres, Solo', 'Kabupaten Sukoharjo', 'Kartasura, Sukoharjo', 'Solo Baru', 'Kabupaten Karanganyar', 'Colomadu, Karanganyar', 'Kabupaten Sragen', 'Kabupaten Boyolali', 'Kabupaten Klaten', 'Delanggu, Klaten', 'Kabupaten Wonogiri',
-          'Kota Magelang', 'Kabupaten Magelang', 'Muntilan, Magelang', 'Kabupaten Temanggung', 'Kabupaten Wonosobo', 'Kabupaten Purworejo', 'Kutoarjo', 'Kabupaten Kebumen', 'Gombong, Kebumen',
-          'Kabupaten Banyumas', 'Purwokerto', 'Ajibarang, Banyumas', 'Kabupaten Cilacap', 'Kroya, Cilacap', 'Majenang, Cilacap', 'Kabupaten Purbalingga', 'Kabupaten Banjarnegara',
-          'Kota Tegal', 'Kabupaten Tegal', 'Slawi', 'Kabupaten Brebes', 'Bumiayu, Brebes', 'Kabupaten Pemalang', 'Kota Pekalongan', 'Kabupaten Pekalongan', 'Kajen, Pekalongan', 'Kabupaten Batang',
+          'Kota Semarang', 'Kabupaten Semarang', 'Ungaran', 'Kota Salatiga', 'Kabupaten Kendal', 'Kabupaten Demak', 'Kabupaten Grobogan', 'Purwodadi',
+          'Kota Surakarta (Solo)', 'Kabupaten Sukoharjo', 'Kabupaten Karanganyar', 'Kabupaten Sragen', 'Kabupaten Boyolali', 'Kabupaten Klaten', 'Kabupaten Wonogiri',
+          'Kota Magelang', 'Kabupaten Magelang', 'Kabupaten Temanggung', 'Kabupaten Wonosobo', 'Kabupaten Purworejo', 'Kabupaten Kebumen',
+          'Kabupaten Banyumas', 'Purwokerto', 'Kabupaten Cilacap', 'Kabupaten Purbalingga', 'Kabupaten Banjarnegara',
+          'Kota Tegal', 'Kabupaten Tegal', 'Slawi', 'Kabupaten Brebes', 'Kabupaten Pemalang', 'Kota Pekalongan', 'Kabupaten Pekalongan', 'Kabupaten Batang',
           'Kabupaten Kudus', 'Kabupaten Jepara', 'Kabupaten Pati', 'Kabupaten Rembang', 'Kabupaten Blora', 'Cepu',
-          'Kota Yogyakarta (Jogja)', 'Gondokusuman, Jogja', 'Umbulharjo, Jogja', 'Kotagede, Jogja', 'Kabupaten Sleman', 'Depok, Sleman', 'Mlati, Sleman', 'Ngaglik, Sleman', 'Gamping, Sleman', 'Kalasan, Sleman', 'Kabupaten Bantul', 'Kasihan, Bantul', 'Sewon, Bantul', 'Banguntapan, Bantul', 'Kabupaten Kulon Progo', 'Wates, Kulon Progo', 'Kabupaten Gunungkidul', 'Wonosari'
+          'Kota Yogyakarta (Jogja)', 'Kabupaten Sleman', 'Kabupaten Bantul', 'Kabupaten Kulon Progo', 'Kabupaten Gunungkidul', 'Wonosari'
         ]
       },
       {
         zone: 'JATIM',
         prov: 'Jawa Timur',
         cities: [
-          'Kota Surabaya', 'Gubeng, Surabaya', 'Wonokromo, Surabaya', 'Rungkut, Surabaya', 'Sukolilo, Surabaya', 'Tegalsari, Surabaya', 'Wiyung, Surabaya', 'Kenjeran, Surabaya', 'Tandes, Surabaya',
-          'Kabupaten Sidoarjo', 'Waru, Sidoarjo', 'Taman, Sidoarjo', 'Krian, Sidoarjo', 'Buduran, Sidoarjo', 'Candi, Sidoarjo', 'Porong, Sidoarjo',
-          'Kabupaten Gresik', 'Kebomas, Gresik', 'Manyar, Gresik', 'Driyorejo, Gresik',
-          'Kabupaten Lamongan', 'Babat, Lamongan', 'Kabupaten Tuban', 'Kabupaten Bojonegoro',
-          'Kota Mojokerto', 'Kabupaten Mojokerto', 'Mojosari, Mojokerto', 'Kabupaten Jombang', 'Kabupaten Nganjuk', 'Kertosono, Nganjuk',
-          'Kota Kediri', 'Kabupaten Kediri', 'Pare, Kediri', 'Kota Blitar', 'Kabupaten Blitar', 'Wlingi, Blitar', 'Kabupaten Tulungagung', 'Kabupaten Trenggalek',
-          'Kota Malang', 'Lowokwaru, Malang', 'Klojen, Malang', 'Blimbing, Malang', 'Sukun, Malang', 'Kedungkandang, Malang', 'Kabupaten Malang', 'Kepanjen, Malang', 'Singosari, Malang', 'Lawang, Malang', 'Kota Batu',
-          'Kota Pasuruan', 'Kabupaten Pasuruan', 'Pandaan, Pasuruan', 'Bangil, Pasuruan', 'Kota Probolinggo', 'Kabupaten Probolinggo', 'Kraksaan, Probolinggo', 'Kabupaten Lumajang',
-          'Kabupaten Jember', 'Sumbersari, Jember', 'Kabupaten Bondowoso', 'Kabupaten Situbondo', 'Kabupaten Banyuwangi', 'Genteng, Banyuwangi', 'Rogojampi, Banyuwangi',
-          'Kota Madiun', 'Kabupaten Madiun', 'Caruban, Madiun', 'Kabupaten Magetan', 'Kabupaten Ngawi', 'Kabupaten Ponorogo', 'Kabupaten Pacitan',
+          'Kota Surabaya', 'Kabupaten Sidoarjo', 'Kabupaten Gresik', 'Kabupaten Lamongan', 'Kabupaten Tuban', 'Kabupaten Bojonegoro',
+          'Kota Mojokerto', 'Kabupaten Mojokerto', 'Kabupaten Jombang', 'Kabupaten Nganjuk',
+          'Kota Kediri', 'Kabupaten Kediri', 'Kota Blitar', 'Kabupaten Blitar', 'Kabupaten Tulungagung', 'Kabupaten Trenggalek',
+          'Kota Malang', 'Kabupaten Malang', 'Kepanjen, Malang', 'Kota Batu', 'Kota Pasuruan', 'Kabupaten Pasuruan', 'Kota Probolinggo', 'Kabupaten Probolinggo', 'Kabupaten Lumajang',
+          'Kabupaten Jember', 'Kabupaten Bondowoso', 'Kabupaten Situbondo', 'Kabupaten Banyuwangi',
+          'Kota Madiun', 'Kabupaten Madiun', 'Kabupaten Magetan', 'Kabupaten Ngawi', 'Kabupaten Ponorogo', 'Kabupaten Pacitan',
           'Kabupaten Bangkalan', 'Kabupaten Sampang', 'Kabupaten Pamekasan', 'Kabupaten Sumenep'
         ]
       },
@@ -534,76 +557,71 @@
         zone: 'BALI_NUSA',
         prov: 'Bali, NTB & NTT',
         cities: [
-          'Kota Denpasar', 'Denpasar Selatan', 'Denpasar Barat', 'Denpasar Timur', 'Denpasar Utara', 'Kabupaten Badung', 'Kuta, Badung', 'Canggu, Badung', 'Jimbaran, Badung', 'Nusa Dua, Badung', 'Mengwi, Badung', 'Kabupaten Gianyar', 'Ubud, Gianyar', 'Sukawati, Gianyar', 'Kabupaten Tabanan', 'Kabupaten Klungkung', 'Kabupaten Bangli', 'Kabupaten Karangasem', 'Kabupaten Buleleng', 'Singaraja', 'Kabupaten Jembrana', 'Negara',
-          'Kota Mataram', 'Kabupaten Lombok Barat', 'Kabupaten Lombok Tengah', 'Praya', 'Kabupaten Lombok Timur', 'Selong', 'Kabupaten Lombok Utara', 'Kabupaten Sumbawa', 'Kabupaten Sumbawa Barat', 'Kabupaten Dompu', 'Kota Bima', 'Kabupaten Bima',
-          'Kota Kupang', 'Kabupaten Kupang', 'Kabupaten Timor Tengah Selatan', 'Kabupaten Timor Tengah Utara', 'Kabupaten Belu', 'Atambua', 'Kabupaten Malaka', 'Kabupaten Alor', 'Kabupaten Lembata', 'Kabupaten Flores Timur', 'Larantuka', 'Kabupaten Sikka', 'Maumere', 'Kabupaten Ende', 'Kabupaten Ngada', 'Bajawa', 'Kabupaten Nagekeo', 'Kabupaten Manggarai', 'Ruteng', 'Kabupaten Manggarai Barat', 'Labuan Bajo', 'Kabupaten Manggarai Timur', 'Kabupaten Sumba Timur', 'Waingapu', 'Kabupaten Sumba Barat', 'Kabupaten Sumba Barat Daya', 'Kabupaten Sumba Tengah', 'Kabupaten Rote Ndao', 'Kabupaten Sabu Raijua'
+          'Kota Denpasar', 'Kabupaten Badung', 'Kuta, Badung', 'Kabupaten Gianyar', 'Ubud, Gianyar', 'Kabupaten Tabanan', 'Kabupaten Klungkung', 'Kabupaten Bangli', 'Kabupaten Karangasem', 'Kabupaten Buleleng', 'Singaraja', 'Kabupaten Jembrana',
+          'Kota Mataram', 'Kabupaten Lombok Barat', 'Kabupaten Lombok Tengah', 'Kabupaten Lombok Timur', 'Kabupaten Lombok Utara', 'Kabupaten Sumbawa', 'Kabupaten Sumbawa Barat', 'Kabupaten Dompu', 'Kota Bima', 'Kabupaten Bima',
+          'Kota Kupang', 'Kabupaten Kupang', 'Kabupaten Belu', 'Kabupaten Flores Timur', 'Kabupaten Sikka', 'Maumere', 'Kabupaten Ende', 'Kabupaten Manggarai', 'Kabupaten Manggarai Barat', 'Labuan Bajo', 'Kabupaten Sumba Timur', 'Kabupaten Sumba Barat'
         ]
       },
       {
         zone: 'SUMATERA_SELATAN',
         prov: 'Sumatera Bagian Selatan & Babel',
         cities: [
-          'Kota Bandar Lampung', 'Kota Metro', 'Kabupaten Lampung Selatan', 'Kalianda', 'Natar, Lampung Selatan', 'Kabupaten Lampung Tengah', 'Bandar Jaya', 'Kabupaten Lampung Utara', 'Kotabumi', 'Kabupaten Lampung Timur', 'Kabupaten Lampung Barat', 'Kabupaten Pesawaran', 'Kabupaten Pringsewu', 'Kabupaten Tanggamus', 'Kabupaten Tulang Bawang', 'Kabupaten Tulang Bawang Barat', 'Kabupaten Mesuji', 'Kabupaten Way Kanan', 'Kabupaten Pesisir Barat',
-          'Kota Palembang', 'Ilir Barat, Palembang', 'Ilir Timur, Palembang', 'Seberang Ulu, Palembang', 'Sukarami, Palembang', 'Kota Prabumulih', 'Kota Lubuklinggau', 'Kota Pagar Alam', 'Kabupaten Banyuasin', 'Kabupaten Ogan Ilir', 'Indralaya', 'Kabupaten Ogan Komering Ilir', 'Kayuagung', 'Kabupaten Ogan Komering Ulu', 'Baturaja', 'Kabupaten OKU Timur', 'Kabupaten OKU Selatan', 'Kabupaten Muara Enim', 'Kabupaten Lahat', 'Kabupaten Musi Banyuasin', 'Sekayu', 'Kabupaten Musi Rawas', 'Kabupaten Musi Rawas Utara', 'Kabupaten Empat Lawang', 'Kabupaten Penukal Abab Lematang Ilir',
-          'Kota Bengkulu', 'Kabupaten Bengkulu Selatan', 'Manna', 'Kabupaten Bengkulu Tengah', 'Kabupaten Bengkulu Utara', 'Arga Makmur', 'Kabupaten Kaur', 'Kabupaten Kepahiang', 'Kabupaten Lebong', 'Kabupaten Mukomuko', 'Kabupaten Rejang Lebong', 'Curup', 'Kabupaten Seluma',
-          'Kota Pangkalpinang', 'Kabupaten Bangka', 'Sungailiat', 'Kabupaten Bangka Barat', 'Muntok', 'Kabupaten Bangka Tengah', 'Koba', 'Kabupaten Bangka Selatan', 'Toboali', 'Kabupaten Belitung', 'Tanjungpandan', 'Kabupaten Belitung Timur', 'Manggar'
+          'Kota Bandar Lampung', 'Kota Metro', 'Kabupaten Lampung Selatan', 'Kabupaten Lampung Tengah', 'Kabupaten Lampung Utara', 'Kabupaten Lampung Timur', 'Kabupaten Pesawaran', 'Kabupaten Pringsewu', 'Kabupaten Tanggamus',
+          'Kota Palembang', 'Kota Prabumulih', 'Kota Lubuklinggau', 'Kota Pagar Alam', 'Kabupaten Banyuasin', 'Kabupaten Ogan Ilir', 'Kabupaten Ogan Komering Ilir', 'Kabupaten Ogan Komering Ulu', 'Kabupaten Muara Enim', 'Kabupaten Lahat', 'Kabupaten Musi Banyuasin',
+          'Kota Bengkulu', 'Kabupaten Rejang Lebong', 'Curup', 'Kabupaten Bengkulu Utara', 'Kabupaten Bengkulu Selatan',
+          'Kota Pangkalpinang', 'Kabupaten Bangka', 'Kabupaten Belitung', 'Tanjungpandan'
         ]
       },
       {
         zone: 'SUMATERA_TENGAH',
         prov: 'Jambi, Riau, Kepri & Sumbar',
         cities: [
-          'Kota Jambi', 'Kota Sungai Penuh', 'Kabupaten Muaro Jambi', 'Kabupaten Batanghari', 'Muara Bulian', 'Kabupaten Bungo', 'Muara Bungo', 'Kabupaten Tebo', 'Kabupaten Merangin', 'Bangko', 'Kabupaten Sarolangun', 'Kabupaten Kerinci', 'Kabupaten Tanjung Jabung Barat', 'Kuala Tungkal', 'Kabupaten Tanjung Jabung Timur',
-          'Kota Pekanbaru', 'Tampan, Pekanbaru', 'Marpoyan Damai, Pekanbaru', 'Kota Dumai', 'Kabupaten Kampar', 'Bangkinang', 'Kabupaten Siak', 'Kabupaten Bengkalis', 'Duri', 'Kabupaten Pelalawan', 'Pangkalan Kerinci', 'Kabupaten Indragiri Hulu', 'Rengat', 'Kabupaten Indragiri Hilir', 'Tembilahan', 'Kabupaten Kuantan Singingi', 'Teluk Kuantan', 'Kabupaten Rokan Hulu', 'Pasir Pengaraian', 'Kabupaten Rokan Hilir', 'Bagan Siapiapi', 'Kabupaten Kepulauan Meranti', 'Selatpanjang',
-          'Kota Batam', 'Batam Kota', 'Batu Aji, Batam', 'Lubuk Baja, Batam', 'Sekupang, Batam', 'Kota Tanjungpinang', 'Kabupaten Bintan', 'Kabupaten Karimun', 'Tanjung Balai Karimun', 'Kabupaten Lingga', 'Kabupaten Natuna', 'Ranai', 'Kabupaten Kepulauan Anambas',
-          'Kota Padang', 'Kota Bukittinggi', 'Kota Payakumbuh', 'Kota Padang Panjang', 'Kota Pariaman', 'Kota Sawahlunto', 'Kota Solok', 'Kabupaten Solok', 'Kabupaten Solok Selatan', 'Kabupaten Agam', 'Lubuk Basung', 'Kabupaten Lima Puluh Kota', 'Kabupaten Tanah Datar', 'Batusangkar', 'Kabupaten Padang Pariaman', 'Kabupaten Pesisir Selatan', 'Painan', 'Kabupaten Pasaman', 'Lubuk Sikaping', 'Kabupaten Pasaman Barat', 'Simpang Ampek', 'Kabupaten Sijunjung', 'Kabupaten Dharmasraya', 'Kabupaten Kepulauan Mentawai'
+          'Kota Jambi', 'Kota Sungai Penuh', 'Kabupaten Muaro Jambi', 'Kabupaten Bungo', 'Kabupaten Tebo', 'Kabupaten Merangin', 'Kabupaten Sarolangun', 'Kabupaten Tanjung Jabung Barat',
+          'Kota Pekanbaru', 'Kota Dumai', 'Kabupaten Kampar', 'Kabupaten Siak', 'Kabupaten Bengkalis', 'Duri', 'Kabupaten Pelalawan', 'Kabupaten Indragiri Hulu', 'Kabupaten Indragiri Hilir', 'Kabupaten Rokan Hulu', 'Kabupaten Rokan Hilir',
+          'Kota Batam', 'Kota Tanjungpinang', 'Kabupaten Bintan', 'Kabupaten Karimun', 'Kabupaten Natuna',
+          'Kota Padang', 'Kota Bukittinggi', 'Kota Payakumbuh', 'Kota Padang Panjang', 'Kota Pariaman', 'Kota Sawahlunto', 'Kota Solok', 'Kabupaten Agam', 'Kabupaten Tanah Datar', 'Kabupaten Pesisir Selatan'
         ]
       },
       {
         zone: 'SUMATERA_UTARA',
         prov: 'Sumatera Utara & Aceh',
         cities: [
-          'Kota Medan', 'Medan Petisah', 'Medan Sunggal', 'Medan Helvetia', 'Medan Johor', 'Medan Tembung', 'Medan Marelan', 'Kota Binjai', 'Kota Tebing Tinggi', 'Kota Pematangsiantar', 'Kota Tanjungbalai', 'Kota Sibolga', 'Kota Padangsidimpuan', 'Kota Gunungsitoli',
-          'Kabupaten Deli Serdang', 'Lubuk Pakam', 'Percut Sei Tuan', 'Tanjung Morawa', 'Kabupaten Langkat', 'Stabat', 'Kabupaten Serdang Bedagai', 'Sei Rampah', 'Kabupaten Karo', 'Kabanjahe', 'Berastagi', 'Kabupaten Simalungun', 'Kabupaten Asahan', 'Kisaran', 'Kabupaten Batu Bara', 'Kabupaten Labuhanbatu', 'Rantauprapat', 'Kabupaten Labuhanbatu Utara', 'Kabupaten Labuhanbatu Selatan', 'Kabupaten Tapanuli Utara', 'Tarutung', 'Kabupaten Tapanuli Tengah', 'Pandan', 'Kabupaten Tapanuli Selatan', 'Sipirok', 'Kabupaten Toba', 'Balige', 'Kabupaten Samosir', 'Pangururan', 'Kabupaten Humbang Hasundutan', 'Doloksanggul', 'Kabupaten Dairi', 'Sidikalang', 'Kabupaten Pakpak Bharat', 'Kabupaten Mandailing Natal', 'Panyabungan', 'Kabupaten Padang Lawas', 'Kabupaten Padang Lawas Utara', 'Kabupaten Nias', 'Kabupaten Nias Selatan', 'Kabupaten Nias Utara', 'Kabupaten Nias Barat',
-          'Kota Banda Aceh', 'Kota Sabang', 'Kota Lhokseumawe', 'Kota Langsa', 'Kota Subulussalam',
-          'Kabupaten Aceh Besar', 'Jantho', 'Kabupaten Pidie', 'Sigli', 'Kabupaten Pidie Jaya', 'Meureudu', 'Kabupaten Bireuen', 'Kabupaten Aceh Utara', 'Lhoksukon', 'Kabupaten Aceh Timur', 'Idi Rayeuk', 'Kabupaten Aceh Tamiang', 'Kuala Simpang', 'Kabupaten Aceh Tengah', 'Takengon', 'Kabupaten Bener Meriah', 'Kabupaten Gayo Lues', 'Blangkejeren', 'Kabupaten Aceh Tenggara', 'Kutacane', 'Kabupaten Aceh Jaya', 'Calang', 'Kabupaten Aceh Barat', 'Meulaboh', 'Kabupaten Nagan Raya', 'Suka Makmue', 'Kabupaten Aceh Barat Daya', 'Blangpidie', 'Kabupaten Aceh Selatan', 'Tapaktuan', 'Kabupaten Aceh Singkil', 'Kabupaten Simeulue', 'Sinabang'
+          'Kota Medan', 'Kota Binjai', 'Kota Tebing Tinggi', 'Kota Pematangsiantar', 'Kota Tanjungbalai', 'Kota Sibolga', 'Kota Padangsidimpuan', 'Kota Gunungsitoli',
+          'Kabupaten Deli Serdang', 'Lubuk Pakam', 'Kabupaten Langkat', 'Kabupaten Serdang Bedagai', 'Kabupaten Karo', 'Berastagi', 'Kabupaten Simalungun', 'Kabupaten Asahan', 'Kisaran', 'Kabupaten Labuhanbatu', 'Rantauprapat', 'Kabupaten Tapanuli Utara', 'Kabupaten Toba',
+          'Kota Banda Aceh', 'Kota Sabang', 'Kota Lhokseumawe', 'Kota Langsa', 'Kota Subulussalam', 'Kabupaten Aceh Besar', 'Kabupaten Pidie', 'Kabupaten Bireuen', 'Kabupaten Aceh Utara', 'Kabupaten Aceh Timur', 'Kabupaten Aceh Tamiang', 'Kabupaten Aceh Tengah', 'Takengon', 'Kabupaten Aceh Barat', 'Meulaboh'
         ]
       },
       {
         zone: 'KALIMANTAN',
         prov: 'Kalimantan (5 Provinsi)',
         cities: [
-          'Kota Pontianak', 'Kota Singkawang', 'Kabupaten Kubu Raya', 'Sungai Raya', 'Kabupaten Mempawah', 'Kabupaten Sambas', 'Kabupaten Bengkayang', 'Kabupaten Landak', 'Ngabang', 'Kabupaten Sanggau', 'Kabupaten Sekadau', 'Kabupaten Sintang', 'Kabupaten Melawi', 'Nanga Pinoh', 'Kabupaten Kapuas Hulu', 'Putussibau', 'Kabupaten Ketapang', 'Kabupaten Kayong Utara',
-          'Kota Palangkaraya', 'Kabupaten Kotawaringin Barat', 'Pangkalan Bun', 'Kabupaten Kotawaringin Timur', 'Sampit', 'Kabupaten Kapuas', 'Kuala Kapuas', 'Kabupaten Pulang Pisau', 'Kabupaten Gunung Mas', 'Kuala Kurun', 'Kabupaten Katingan', 'Kasongan', 'Kabupaten Seruyan', 'Kuala Pembuang', 'Kabupaten Sukamara', 'Kabupaten Lamandau', 'Nanga Bulik', 'Kabupaten Barito Selatan', 'Buntok', 'Kabupaten Barito Timur', 'Tamiang Layang', 'Kabupaten Barito Utara', 'Muara Teweh', 'Kabupaten Murung Raya', 'Puruk Cahu',
-          'Kota Banjarmasin', 'Kota Banjarbaru', 'Kabupaten Banjar', 'Martapura', 'Kabupaten Barito Kuala', 'Marabahan', 'Kabupaten Tanah Laut', 'Pelaihari', 'Kabupaten Tanah Bumbu', 'Batulicin', 'Kabupaten Kotabaru', 'Kabupaten Tapin', 'Rantau', 'Kabupaten Hulu Sungai Selatan', 'Kandangan', 'Kabupaten Hulu Sungai Tengah', 'Barabai', 'Kabupaten Hulu Sungai Utara', 'Amuntai', 'Kabupaten Balangan', 'Paringin', 'Kabupaten Tabalong', 'Tanjung',
-          'Kota Samarinda', 'Kota Balikpapan', 'Kota Bontang', 'Kabupaten Kutai Kartanegara', 'Tenggarong', 'Kabupaten Kutai Timur', 'Sangatta', 'Kabupaten Kutai Barat', 'Sendawar', 'Kabupaten Mahakam Ulu', 'Kabupaten Paser', 'Tanah Grogot', 'Kabupaten Penajam Paser Utara', 'Ibu Kota Nusantara (IKN)', 'Kabupaten Berau', 'Tanjung Redeb',
-          'Kota Tarakan', 'Kabupaten Bulungan', 'Tanjung Selor', 'Kabupaten Malinau', 'Kabupaten Nunukan', 'Kabupaten Tana Tidung'
+          'Kota Pontianak', 'Kota Singkawang', 'Kabupaten Kubu Raya', 'Kabupaten Sambas', 'Kabupaten Sanggau', 'Kabupaten Sintang', 'Kabupaten Ketapang',
+          'Kota Palangkaraya', 'Kabupaten Kotawaringin Barat', 'Pangkalan Bun', 'Kabupaten Kotawaringin Timur', 'Sampit', 'Kabupaten Kapuas', 'Kabupaten Barito Utara',
+          'Kota Banjarmasin', 'Kota Banjarbaru', 'Kabupaten Banjar', 'Martapura', 'Kabupaten Tanah Laut', 'Kabupaten Tanah Bumbu', 'Kabupaten Kotabaru', 'Kabupaten Tabalong',
+          'Kota Samarinda', 'Kota Balikpapan', 'Kota Bontang', 'Kabupaten Kutai Kartanegara', 'Tenggarong', 'Kabupaten Kutai Timur', 'Sangatta', 'Kabupaten Paser', 'Kabupaten Penajam Paser Utara', 'Ibu Kota Nusantara (IKN)', 'Kabupaten Berau',
+          'Kota Tarakan', 'Kabupaten Bulungan', 'Tanjung Selor', 'Kabupaten Nunukan'
         ]
       },
       {
         zone: 'SULAWESI',
         prov: 'Sulawesi (6 Provinsi)',
         cities: [
-          'Kota Makassar', 'Panakkukang, Makassar', 'Rappocini, Makassar', 'Tamalanrea, Makassar', 'Biringkanaya, Makassar', 'Kota Parepare', 'Kota Palopo', 'Kabupaten Gowa', 'Sungguminasa', 'Kabupaten Maros', 'Kabupaten Pangkajene dan Kepulauan', 'Pangkep', 'Kabupaten Barru', 'Kabupaten Takalar', 'Kabupaten Jeneponto', 'Kabupaten Bantaeng', 'Kabupaten Bulukumba', 'Kabupaten Sinjai', 'Kabupaten Kepulauan Selayar', 'Benteng', 'Kabupaten Bone', 'Watampone', 'Kabupaten Soppeng', 'Watansoppeng', 'Kabupaten Wajo', 'Sengkang', 'Kabupaten Sidenreng Rappang', 'Sidrap', 'Kabupaten Pinrang', 'Kabupaten Enrekang', 'Kabupaten Tana Toraja', 'Makale', 'Kabupaten Toraja Utara', 'Rantepao', 'Kabupaten Luwu', 'Belopa', 'Kabupaten Luwu Utara', 'Masamba', 'Kabupaten Luwu Timur', 'Malili',
-          'Kota Kendari', 'Kota Baubau', 'Kabupaten Konawe', 'Unaaha', 'Kabupaten Konawe Selatan', 'Andoolo', 'Kabupaten Konawe Utara', 'Kabupaten Konawe Kepulauan', 'Kabupaten Kolaka', 'Kabupaten Kolaka Timur', 'Kabupaten Kolaka Utara', 'Lasusua', 'Kabupaten Bombana', 'Rumbia', 'Kabupaten Muna', 'Raha', 'Kabupaten Muna Barat', 'Kabupaten Buton', 'Pasarwajo', 'Kabupaten Buton Selatan', 'Kabupaten Buton Tengah', 'Kabupaten Buton Utara', 'Kabupaten Wakatobi', 'Wangi-Wangi',
-          'Kota Palu', 'Kabupaten Sigi', 'Kabupaten Donggala', 'Kabupaten Parigi Moutong', 'Parigi', 'Kabupaten Poso', 'Kabupaten Tojo Una-Una', 'Ampana', 'Kabupaten Morowali', 'Bungku', 'Kabupaten Morowali Utara', 'Kolonodale', 'Kabupaten Banggai', 'Luwuk', 'Kabupaten Banggai Kepulauan', 'Kabupaten Banggai Laut', 'Kabupaten Tolitoli', 'Kabupaten Buol',
-          'Kabupaten Mamuju', 'Kabupaten Polewali Mandar', 'Polewali', 'Kabupaten Majene', 'Kabupaten Mamasa', 'Kabupaten Pasangkayu', 'Kabupaten Mamuju Tengah',
-          'Kota Gorontalo', 'Kabupaten Gorontalo', 'Limboto', 'Kabupaten Gorontalo Utara', 'Kwandang', 'Kabupaten Bone Bolango', 'Suwawa', 'Kabupaten Boalemo', 'Tilamuta', 'Kabupaten Pohuwato', 'Marisa',
-          'Kota Manado', 'Kota Bitung', 'Kota Tomohon', 'Kota Kotamobagu', 'Kabupaten Minahasa', 'Tondano', 'Kabupaten Minahasa Utara', 'Airmadidi', 'Kabupaten Minahasa Selatan', 'Amurang', 'Kabupaten Minahasa Tenggara', 'Ratahan', 'Kabupaten Bolaang Mongondow', 'Lolak', 'Kabupaten Bolaang Mongondow Utara', 'Kabupaten Bolaang Mongondow Selatan', 'Kabupaten Bolaang Mongondow Timur', 'Kabupaten Kepulauan Sangihe', 'Tahuna', 'Kabupaten Kepulauan Talaud', 'Melonguane', 'Kabupaten Kepulauan Siau Tagulandang Biaro'
+          'Kota Makassar', 'Kota Parepare', 'Kota Palopo', 'Kabupaten Gowa', 'Kabupaten Maros', 'Kabupaten Bone', 'Kabupaten Bulukumba', 'Kabupaten Wajo', 'Kabupaten Pinrang', 'Kabupaten Tana Toraja', 'Kabupaten Luwu Timur',
+          'Kota Kendari', 'Kota Baubau', 'Kabupaten Konawe', 'Kabupaten Kolaka', 'Kabupaten Muna', 'Kabupaten Buton', 'Kabupaten Wakatobi',
+          'Kota Palu', 'Kabupaten Sigi', 'Kabupaten Donggala', 'Kabupaten Parigi Moutong', 'Kabupaten Poso', 'Kabupaten Morowali', 'Kabupaten Banggai', 'Luwuk', 'Kabupaten Tolitoli',
+          'Kabupaten Mamuju', 'Kabupaten Polewali Mandar', 'Kabupaten Majene',
+          'Kota Gorontalo', 'Kabupaten Gorontalo', 'Kabupaten Boalemo', 'Kabupaten Pohuwato',
+          'Kota Manado', 'Kota Bitung', 'Kota Tomohon', 'Kota Kotamobagu', 'Kabupaten Minahasa', 'Kabupaten Minahasa Utara', 'Kabupaten Minahasa Selatan', 'Kabupaten Kepulauan Sangihe'
         ]
       },
       {
         zone: 'MALUKU_PAPUA',
         prov: 'Maluku & Papua (8 Provinsi)',
         cities: [
-          'Kota Ambon', 'Kota Tual', 'Kabupaten Maluku Tengah', 'Masohi', 'Kabupaten Seram Bagian Barat', 'Piru', 'Kabupaten Seram Bagian Timur', 'Bula', 'Kabupaten Buru', 'Namlea', 'Kabupaten Buru Selatan', 'Namrole', 'Kabupaten Maluku Tenggara', 'Langgur', 'Kabupaten Kepulauan Tanimbar', 'Saumlaki', 'Kabupaten Kepulauan Aru', 'Dobo', 'Kabupaten Maluku Barat Daya', 'Tiakur',
-          'Kota Ternate', 'Kota Tidore Kepulauan', 'Kabupaten Halmahera Barat', 'Jailolo', 'Kabupaten Halmahera Tengah', 'Weda', 'Kabupaten Halmahera Utara', 'Tobelo', 'Kabupaten Halmahera Selatan', 'Labuha', 'Kabupaten Halmahera Timur', 'Maba', 'Kabupaten Kepulauan Sula', 'Sanana', 'Kabupaten Pulau Morotai', 'Daruba', 'Kabupaten Pulau Taliabu', 'Bobong',
-          'Kota Jayapura', 'Abepura, Jayapura', 'Kabupaten Jayapura', 'Sentani', 'Kabupaten Keerom', 'Kabupaten Sarmi', 'Kabupaten Mamberamo Raya', 'Kabupaten Biak Numfor', 'Biak', 'Kabupaten Supiori', 'Kabupaten Kepulauan Yapen', 'Serui', 'Kabupaten Waropen',
-          'Kabupaten Nabire', 'Kabupaten Mimika', 'Timika', 'Kabupaten Paniai', 'Enarotali', 'Kabupaten Deiyai', 'Kabupaten Dogiyai', 'Kabupaten Intan Jaya', 'Kabupaten Puncak', 'Kabupaten Puncak Jaya', 'Mulia',
-          'Kabupaten Jayawijaya', 'Wamena', 'Kabupaten Lanny Jaya', 'Tiom', 'Kabupaten Mamberamo Tengah', 'Kabupaten Nduga', 'Kabupaten Pegunungan Bintang', 'Oksibil', 'Kabupaten Tolikara', 'Karubaga', 'Kabupaten Yahukimo', 'Dekai', 'Kabupaten Yalimo',
-          'Kabupaten Merauke', 'Kabupaten Asmat', 'Agats', 'Kabupaten Boven Digoel', 'Tanah Merah', 'Kabupaten Mappi', 'Kepi',
-          'Kota Sorong', 'Kabupaten Sorong', 'Aimas', 'Kabupaten Sorong Selatan', 'Teminabuan', 'Kabupaten Raja Ampat', 'Waisai', 'Kabupaten Tambrauw', 'Fef', 'Kabupaten Maybrat', 'Kumurkek',
-          'Kabupaten Manokwari', 'Kabupaten Manokwari Selatan', 'Ransiki', 'Kabupaten Pegunungan Arfak', 'Kabupaten Teluk Bintuni', 'Bintuni', 'Kabupaten Teluk Wondama', 'Rasiei', 'Kabupaten Fakfak', 'Kabupaten Kaimana'
+          'Kota Ambon', 'Kota Tual', 'Kabupaten Maluku Tengah', 'Kabupaten Buru', 'Kabupaten Maluku Tenggara', 'Kabupaten Kepulauan Aru',
+          'Kota Ternate', 'Kota Tidore Kepulauan', 'Kabupaten Halmahera Utara', 'Tobelo', 'Kabupaten Halmahera Selatan', 'Kabupaten Kepulauan Sula',
+          'Kota Jayapura', 'Kabupaten Jayapura', 'Sentani', 'Kabupaten Biak Numfor', 'Kabupaten Nabire', 'Kabupaten Mimika', 'Timika', 'Kabupaten Jayawijaya', 'Wamena', 'Kabupaten Merauke',
+          'Kota Sorong', 'Kabupaten Sorong', 'Kabupaten Raja Ampat', 'Kabupaten Manokwari', 'Kabupaten Teluk Bintuni', 'Kabupaten Fakfak'
         ]
       }
     ];
@@ -620,23 +638,6 @@
       });
     });
 
-    // Pemetaan ID Provinsi Kemendagri -> Zona Ongkir
-    function mapProvIdToZone(idStr) {
-      const prefix = String(idStr).slice(0, 2);
-      if (['31', '36'].includes(prefix)) return 'JABODETABEK'; // DKI & Banten
-      if (prefix === '32') return 'JABAR';
-      if (['33', '34'].includes(prefix)) return 'JATENG'; // Jateng & DIY
-      if (prefix === '35') return 'JATIM';
-      if (['51', '52', '53'].includes(prefix)) return 'BALI_NUSA';
-      if (['15', '16', '17', '18', '19'].includes(prefix)) return 'SUMATERA_SELATAN';
-      if (['13', '14', '21'].includes(prefix)) return 'SUMATERA_TENGAH';
-      if (['11', '12'].includes(prefix)) return 'SUMATERA_UTARA';
-      if (['61', '62', '63', '64', '65'].includes(prefix)) return 'KALIMANTAN';
-      if (['71', '72', '73', '74', '75', '76'].includes(prefix)) return 'SULAWESI';
-      if (['81', '82', '91', '92', '93', '94', '95', '96'].includes(prefix)) return 'MALUKU_PAPUA';
-      return 'JABAR';
-    }
-
     const resiInput = document.getElementById('resiInput');
     const courierSelect = document.getElementById('courierSelect');
     const packageLabelInput = document.getElementById('packageLabel');
@@ -647,6 +648,7 @@
     let detectedClipboardResi = '';
     let lastDismissedResi = '';
     let lastCalculatedRatesText = '';
+    let lastTrackingSummaryText = '';
     let selectedOriginZone = null;
     let selectedDestZone = null;
     let searchDebounceTimer = null;
@@ -738,6 +740,140 @@
       }
     }
 
+    // ==================== LACAK RESI 100% DI DALAM APK ====================
+    function closeTrackingResult() {
+      document.getElementById('trackingResultSection').classList.add('hidden');
+      document.getElementById('inAppTrackingFrame').src = 'about:blank';
+    }
+
+    async function copyTrackingResult() {
+      if (!lastTrackingSummaryText) return;
+      try {
+        await navigator.clipboard.writeText(lastTrackingSummaryText);
+        showToast('Status paket disalin!');
+      } catch (e) {}
+    }
+
+    async function trackPackage(customResi = null, customCourier = null, customLabel = null) {
+      const resi = (customResi || resiInput.value).trim().toUpperCase().replace(/\s+/g, '');
+      const courier = customCourier || courierSelect.value;
+      const label = customLabel !== null ? customLabel : packageLabelInput.value.trim();
+
+      if (!resi || resi.length < 6) {
+        showToast('Masukkan nomor resi yang valid');
+        resiInput.focus();
+        return;
+      }
+
+      if (customResi) resiInput.value = resi;
+      if (customCourier) courierSelect.value = courier;
+      if (customLabel !== null) packageLabelInput.value = label;
+
+      try {
+        await navigator.clipboard.writeText(resi);
+      } catch (e) {}
+
+      saveHistory(resi, courier, label);
+
+      const courierObj = COURIERS[courier] || { name: courier.toUpperCase(), code: courier, url: (r) => `https://www.google.com/search?igu=1&q=cek+resi+${r}` };
+
+      // Siapkan kartu hasil di dalam APK
+      const resultSec = document.getElementById('trackingResultSection');
+      const loadingEl = document.getElementById('trackingLoading');
+      const timelineContainer = document.getElementById('trackingTimelineContainer');
+      const webViewerContainer = document.getElementById('inAppWebViewerContainer');
+
+      document.getElementById('resCourierBadge').textContent = courierObj.name;
+      document.getElementById('resStatusBadge').textContent = 'Mencari...';
+      document.getElementById('resStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/25';
+      document.getElementById('resResiTitle').textContent = resi;
+
+      const labelEl = document.getElementById('resLabelSubtitle');
+      if (label) {
+        labelEl.textContent = label;
+        labelEl.classList.remove('hidden');
+      } else {
+        labelEl.classList.add('hidden');
+      }
+
+      resultSec.classList.remove('hidden');
+      loadingEl.classList.remove('hidden');
+      timelineContainer.classList.add('hidden');
+      webViewerContainer.classList.add('hidden');
+
+      lastTrackingSummaryText = `*Lacak Paket (${courierObj.name})*\nNo. Resi: ${resi}${label ? `\nCatatan: ${label}` : ''}`;
+
+      // Coba tarik data tracking JSON langsung ke dalam APK
+      let fetchedSuccess = false;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+        const apiUrl = `https://api.binderbyte.com/v1/track?api_key=free&courier=${encodeURIComponent(courierObj.code)}&awb=${encodeURIComponent(resi)}`;
+        const resp = await fetch(apiUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json && json.status === 200 && json.data && Array.isArray(json.data.history) && json.data.history.length > 0) {
+            const summary = json.data.summary || {};
+            const historyItems = json.data.history;
+
+            document.getElementById('resStatusBadge').textContent = summary.status || 'Dalam Pengiriman';
+            document.getElementById('resStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
+
+            const detail = json.data.detail || {};
+            let summaryHtml = `<p class="text-slate-300"><span class="text-slate-500">Status:</span> <strong class="text-white">${escapeHtml(summary.status || '-')}</strong></p>`;
+            if (detail.origin || detail.destination) {
+              summaryHtml += `<p class="text-slate-300"><span class="text-slate-500">Rute:</span> ${escapeHtml(detail.origin || '-')} → ${escapeHtml(detail.destination || '-')}</p>`;
+            }
+            if (detail.receiver) {
+              summaryHtml += `<p class="text-slate-300"><span class="text-slate-500">Penerima:</span> ${escapeHtml(detail.receiver)}</p>`;
+            }
+            document.getElementById('trackingSummaryBox').innerHTML = summaryHtml;
+
+            document.getElementById('trackingTimelineList').innerHTML = historyItems.map((h, i) => `
+              <div class="relative">
+                <span class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full ${i === 0 ? 'bg-amber-400 ring-4 ring-amber-400/20' : 'bg-slate-600'}"></span>
+                <p class="font-mono text-[10px] ${i === 0 ? 'text-amber-400 font-semibold' : 'text-slate-500'}">${escapeHtml(h.date || '')}</p>
+                <p class="text-xs ${i === 0 ? 'text-white font-semibold' : 'text-slate-300'} mt-0.5 leading-relaxed">${escapeHtml(h.desc || '')}</p>
+              </div>
+            `).join('');
+
+            lastTrackingSummaryText = `*Status Paket (${courierObj.name})*\nResi: ${resi}\nStatus: ${summary.status || '-'}\n\n` +
+              historyItems.slice(0, 6).map(h => `• [${h.date}] ${h.desc}`).join('\n');
+
+            loadingEl.classList.add('hidden');
+            timelineContainer.classList.remove('hidden');
+            fetchedSuccess = true;
+            showToast('Status paket berhasil dimuat!');
+          }
+        }
+      } catch (err) {}
+
+      // Fallback 100% Di Dalam APK (In-App Frame) tanpa keluar ke browser luar
+      if (!fetchedSuccess) {
+        loadingEl.classList.add('hidden');
+        document.getElementById('resStatusBadge').textContent = 'Live Web Kurir';
+        document.getElementById('resStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 border border-sky-500/25';
+
+        const frame = document.getElementById('inAppTrackingFrame');
+        frame.src = courierObj.url(resi);
+        webViewerContainer.classList.remove('hidden');
+        showToast(`Resi ${resi} disalin & ditampilkan di dalam APK`);
+      }
+
+      resultSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function trackFromHistory(index) {
+      const history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      const item = history[index];
+      if (item) {
+        trackPackage(item.resi, item.courier, item.label || '');
+      }
+    }
+
     // ==================== PENCARIAN WILAYAH HYBRID (LOKAL + API KECAMATAN ID) ====================
     function renderDropdownItems(type, items) {
       const dropdownEl = document.getElementById(type === 'origin' ? 'originDropdown' : 'destDropdown');
@@ -771,11 +907,9 @@
         return;
       }
 
-      // 1. Cari cepat dari database lokal dulu
       const localMatches = ALL_CITIES.filter(c => c.lower.includes(query)).slice(0, 15);
       renderDropdownItems(type, localMatches);
 
-      // 2. Jika hasil lokal sedikit (< 5) & ketikan >= 3 huruf, cari otomatis ke API Wilayah Indonesia (Kecamatan & Kota)
       clearTimeout(searchDebounceTimer);
       if (query.length >= 3) {
         searchDebounceTimer = setTimeout(async () => {
@@ -798,7 +932,6 @@
                 if (seen.has(key)) continue;
                 seen.add(key);
 
-                // Deteksi zona dari nama provinsi
                 let zone = 'JABAR';
                 const pLow = prov.toLowerCase();
                 if (/(jakarta|banten)/.test(pLow) || /(bogor|depok|bekasi)/.test(kab.toLowerCase())) zone = 'JABODETABEK';
@@ -1004,11 +1137,7 @@
       } catch (e) {}
     }
 
-    function openOfficialRate(url) {
-      window.open(url, '_system');
-    }
-
-    // ==================== LACAK RESI & RIWAYAT ====================
+    // ==================== CLIPBOARD & RIWAYAT ====================
     async function checkClipboardAutoDetect() {
       try {
         if (!navigator.clipboard || !navigator.clipboard.readText) return;
@@ -1056,38 +1185,6 @@
         }
       } catch (err) {
         showToast('Tempel manual di kolom resi ya');
-      }
-    }
-
-    async function trackPackage(customResi = null, customCourier = null, customLabel = null) {
-      const resi = (customResi || resiInput.value).trim().toUpperCase().replace(/\s+/g, '');
-      const courier = customCourier || courierSelect.value;
-      const label = customLabel !== null ? customLabel : packageLabelInput.value.trim();
-
-      if (!resi || resi.length < 6) {
-        showToast('Masukkan nomor resi yang valid');
-        resiInput.focus();
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(resi);
-      } catch (e) {}
-
-      saveHistory(resi, courier, label);
-      showToast(`Resi ${resi} disalin & membuka pelacakan...`);
-
-      const targetUrl = COURIERS[courier] ? COURIERS[courier].url(resi) : `https://www.google.com/search?q=cek+resi+${resi}`;
-      setTimeout(() => {
-        window.open(targetUrl, '_system');
-      }, 350);
-    }
-
-    function trackFromHistory(index) {
-      const history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
-      const item = history[index];
-      if (item) {
-        trackPackage(item.resi, item.courier, item.label || '');
       }
     }
 
