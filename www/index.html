@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cek Paket</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      background-color: #06090e;
+      background-image: 
+        radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.13), transparent 55%),
+        radial-gradient(circle at 100% 45%, rgba(16, 185, 129, 0.06), transparent 45%);
+    }
+    input, textarea, select {
+      user-select: text;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .glass-card {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.92) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    }
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-20 px-5 pt-5 pb-3.5 bg-[#06090e]/85 backdrop-blur-xl border-b border-white/[0.06]">
+    <div class="max-w-md mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3.5 min-w-0">
+        <div class="relative w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 p-[1px] shadow-lg shadow-amber-500/20">
+          <div class="w-full h-full bg-[#13100b] rounded-[15px] flex items-center justify-center">
+            <svg class="w-5 h-5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="truncate">
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-[17px] tracking-tight text-white">Cek Paket</h1>
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20"></span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5 truncate">Lacak resi & tarif ongkir tanpa batas</p>
+        </div>
+      </div>
+
+      <!-- Tombol Info Developer & Versi -->
+      <button onclick="openInfoModal()" class="relative w-9 h-9 shrink-0 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-slate-300 hover:text-amber-400 flex items-center justify-center transition active:scale-95" title="Info Developer & Versi">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span id="updateDot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#06090e]"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 px-5 py-5 max-w-md w-full mx-auto space-y-5">
+
+    <!-- Banner Update Tersedia -->
+    <div id="updateBanner" class="hidden bg-gradient-to-r from-emerald-500/15 to-teal-500/15 border border-emerald-500/30 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-white">Update Tersedia (<span id="latestVersionText" class="font-mono text-emerald-400"></span>)</p>
+          <p class="text-[11px] text-slate-300 mt-0.5">Versi baru siap di-download dari GitHub</p>
+        </div>
+      </div>
+      <a id="downloadUpdateBtn" href="#" target="_system" class="shrink-0 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-md shadow-emerald-500/20">
+        Update
+      </a>
+    </div>
+
+    <!-- Switcher Tab: Lacak Resi vs Cek Ongkir -->
+    <div class="grid grid-cols-2 gap-1.5 p-1.5 bg-[#0d121c] border border-white/[0.07] rounded-2xl">
+      <button id="tabBtnResi" onclick="switchTab('resi')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Lacak Resi</span>
+      </button>
+      <button id="tabBtnOngkir" onclick="switchTab('ongkir')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        <span>Cek Ongkir</span>
+      </button>
+    </div>
+
+    <!-- ==================== PANEL 1: LACAK RESI ==================== -->
+    <div id="panelResi" class="space-y-6">
+      <div class="glass-card border border-white/[0.08] rounded-3xl p-5 space-y-5">
+        
+        <!-- Smart Auto-Detect Resi Clipboard -->
+        <div id="clipboardSuggestion" class="hidden bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3 flex items-center justify-between gap-2.5">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-2 h-2 rounded-full bg-amber-400 shrink-0 animate-pulse"></span>
+            <div class="truncate">
+              <p id="detectedCourierLabel" class="text-[10px] uppercase tracking-wider font-semibold text-amber-300">Resi Terdeteksi</p>
+              <p id="detectedResiText" class="font-mono text-xs text-white truncate mt-0.5">JP1234567890</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="applyDetectedClipboard()" class="bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl transition">
+              Pakai
+            </button>
+            <button onclick="dismissClipboardSuggestion()" class="p-1.5 text-slate-400 hover:text-white rounded-lg transition">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Input Nomor Resi -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label for="resiInput" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Nomor Resi</label>
+            <button onclick="pasteResi()" class="text-xs font-medium text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1.5 active:scale-95 transition-all">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Tempel</span>
+            </button>
+          </div>
+
+          <div class="relative flex items-center">
+            <input 
+              type="text" 
+              id="resiInput" 
+              placeholder="Contoh: JP1234567890" 
+              autocomplete="off"
+              class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 focus:ring-4 focus:ring-amber-500/10 rounded-2xl py-3.5 px-4 pr-11 font-mono text-[15px] uppercase tracking-wider text-white placeholder-slate-600 outline-none transition-all shadow-inner"
+            >
+            <button onclick="clearResiInput()" id="clearResiBtn" class="hidden absolute right-3 w-7 h-7 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pilih Kurir (Auto-Detect) -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label for="courierSelect" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Ekspedisi / Kurir</label>
+            <span id="autoDetectBadge" class="hidden text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">Terdeteksi Otomatis</span>
+          </div>
+
+          <div class="relative">
+            <select id="courierSelect" class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3.5 px-4 pr-10 text-sm font-semibold text-slate-100 outline-none cursor-pointer">
+              <option value="jnt" class="bg-[#0b0f19]">J&T Express</option>
+              <option value="jne" class="bg-[#0b0f19]">JNE Express</option>
+              <option value="spx" class="bg-[#0b0f19]">SPX Express (Shopee)</option>
+              <option value="sicepat" class="bg-[#0b0f19]">SiCepat Ekspres</option>
+              <option value="anteraja" class="bg-[#0b0f19]">Anteraja</option>
+              <option value="pos" class="bg-[#0b0f19]">POS Indonesia</option>
+              <option value="ninja" class="bg-[#0b0f19]">Ninja Xpress</option>
+              <option value="lion" class="bg-[#0b0f19]">Lion Parcel</option>
+              <option value="idexpress" class="bg-[#0b0f19]">ID Express</option>
+              <option value="tiki" class="bg-[#0b0f19]">TIKI</option>
+            </select>
+            <svg class="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Catatan / Label Paket (Opsional) -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label for="packageLabel" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Label Paket</label>
+            <span class="text-[10px] text-slate-500">Opsional</span>
+          </div>
+          <input 
+            type="text" 
+            id="packageLabel" 
+            placeholder="Misal: Sepatu Lari / Orderan Kak Budi" 
+            class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3 px-4 text-xs text-slate-100 placeholder-slate-600 outline-none transition-all shadow-inner"
+          >
+        </div>
+
+        <!-- Tombol Lacak -->
+        <button 
+          onclick="trackPackage()" 
+          class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 px-6 rounded-2xl shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-[14px]"
+        >
+          <span>Lacak Paket Sekarang</span>
+          <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Riwayat Resi Tersimpan -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <div class="flex items-center gap-2">
+            <h2 class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Paket Tersimpan</h2>
+            <span id="historyCount" class="hidden text-[10px] font-mono bg-white/[0.06] text-slate-400 px-1.5 py-0.5 rounded-md">0</span>
+          </div>
+          <button onclick="clearHistory()" id="clearHistoryBtn" class="hidden text-xs font-medium text-rose-400/90 hover:text-rose-300 transition">
+            Bersihkan
+          </button>
+        </div>
+        
+        <div id="historyList" class="space-y-2.5"></div>
+      </div>
+    </div>
+
+    <!-- ==================== PANEL 2: CEK ONGKIR ==================== -->
+    <div id="panelOngkir" class="hidden space-y-5">
+      <div class="glass-card border border-white/[0.08] rounded-3xl p-5 space-y-4">
+        
+        <div>
+          <label for="originCity" class="block text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Kota / Kecamatan Asal</label>
+          <input 
+            type="text" 
+            id="originCity" 
+            placeholder="Misal: Tangerang / Jakarta Selatan" 
+            class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3 px-4 text-sm text-white placeholder-slate-600 outline-none transition-all shadow-inner"
+          >
+        </div>
+
+        <div>
+          <label for="destCity" class="block text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Kota / Kecamatan Tujuan</label>
+          <input 
+            type="text" 
+            id="destCity" 
+            placeholder="Misal: Bandung / Surabaya" 
+            class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3 px-4 text-sm text-white placeholder-slate-600 outline-none transition-all shadow-inner"
+          >
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label for="weightGram" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Berat Paket (Gram)</label>
+            <span id="weightKgPreview" class="font-mono text-xs text-amber-400 font-semibold">1.0 Kg</span>
+          </div>
+          <input 
+            type="number" 
+            id="weightGram" 
+            value="1000" 
+            min="100"
+            step="100"
+            class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3 px-4 font-mono text-sm text-white outline-none transition-all shadow-inner"
+          >
+          <div class="flex gap-2 pt-2.5 overflow-x-auto no-scrollbar">
+            <button onclick="setWeight(500)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">500g</button>
+            <button onclick="setWeight(1000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">1 Kg</button>
+            <button onclick="setWeight(2000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">2 Kg</button>
+            <button onclick="setWeight(5000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">5 Kg</button>
+          </div>
+        </div>
+
+        <button 
+          onclick="checkOngkirAll()" 
+          class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 px-6 rounded-2xl shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-[14px]"
+        >
+          <span>Cek Tarif Semua Kurir</span>
+          <svg class="w-4 h-4 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <!-- Pintasan Cek Tarif Resmi Per Kurir -->
+        <div class="pt-2 border-t border-white/[0.06]">
+          <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2.5">Atau Langsung ke Web Tarif Resmi:</p>
+          <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
+            <button onclick="openOfficialRate('https://jet.co.id/rates')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">J&T</button>
+            <button onclick="openOfficialRate('https://www.jne.co.id/id/tracking/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">JNE</button>
+            <button onclick="openOfficialRate('https://www.sicepat.com/deliveryFee')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">SiCepat</button>
+            <button onclick="openOfficialRate('https://anteraja.id/cek-ongkir')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Anteraja</button>
+            <button onclick="openOfficialRate('https://www.posindonesia.co.id/id/check-tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">POS</button>
+            <button onclick="openOfficialRate('https://lionparcel.com/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Lion</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Minimalis -->
+  <footer class="py-5 px-5 text-center border-t border-white/[0.04]">
+    <button onclick="openInfoModal()" class="inline-flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 transition">
+      <span>Developed by</span>
+      <span class="font-semibold text-amber-400/90">Wahyu Firman Nugraha</span>
+      <span class="text-slate-600">•</span>
+      <span class="underline decoration-slate-700 underline-offset-2">Info APK</span>
+    </button>
+  </footer>
+
+  <!-- Modal Info APK & Developer (Tengah Layar) -->
+  <div id="infoModal" onclick="closeInfoModal(event)" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity">
+    <div onclick="event.stopPropagation()" class="w-full max-w-sm bg-[#0e1420] border border-white/10 rounded-3xl p-6 space-y-5 shadow-2xl">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 p-[1px] shadow-lg shadow-amber-500/20">
+            <div class="w-full h-full bg-[#13100b] rounded-[15px] flex items-center justify-center">
+              <svg class="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-base text-white">Cek Paket</h3>
+              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">100% FREE</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Lacak Resi & Cek Ongkir Instan</p>
+          </div>
+        </div>
+        <button onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs leading-relaxed text-slate-300">
+        Aplikasi pelacakan resi dan pengecekan ongkos kirim semua ekspedisi Indonesia tanpa batas kuota harian dan bebas iklan mengganggu.
+      </p>
+
+      <div class="bg-[#070a10] border border-white/[0.07] rounded-2xl p-4 space-y-3 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Developer</span>
+          <span class="font-semibold text-white">Wahyu Firman Nugraha</span>
+        </div>
+        <div class="h-px bg-white/[0.05]"></div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">GitHub</span>
+          <span class="font-mono text-amber-400">@WFNMKBOT</span>
+        </div>
+        <div class="h-px bg-white/[0.05]"></div>
+        <div class="flex justify-between items-center">
+          <span class="text-slate-400">Versi Aplikasi</span>
+          <span id="modalVersionText" class="font-mono text-slate-200">v1.0.0</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2.5">
+        <button onclick="closeInfoModal(); checkAppUpdate(true);" class="flex-1 bg-white/[0.06] hover:bg-white/[0.1] active:scale-[0.98] text-slate-200 border border-white/[0.08] font-semibold py-2.5 px-3 rounded-xl text-xs transition">
+          Cek Update
+        </button>
+        <a href="https://github.com/WFNMKBOT/cek-paket" target="_system" class="flex-1 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-bold py-2.5 px-3 rounded-xl text-xs text-center transition">
+          Buka GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifikasi -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md text-slate-100 text-xs font-medium px-4 py-2.5 rounded-full shadow-2xl border border-white/10 flex items-center gap-2 opacity-0 translate-y-2 pointer-events-none transition-all duration-300">
+    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+    <span id="toastText">Notifikasi</span>
+  </div>
+
+  <script>
+    const GITHUB_REPO = 'WFNMKBOT/cek-paket';
+    const CURRENT_VERSION = '__APP_VERSION__';
+
+    const COURIERS = {
+      jnt: { name: 'J&T Express', url: (r) => `https://jet.co.id/track?bills=${r}` },
+      jne: { name: 'JNE Express', url: (r) => `https://www.jne.co.id/id/tracking/trace` },
+      spx: { name: 'SPX Express', url: (r) => `https://spx.co.id/detail/${r}` },
+      sicepat: { name: 'SiCepat', url: (r) => `https://www.sicepat.com/checkAwb?awb=${r}` },
+      anteraja: { name: 'Anteraja', url: (r) => `https://anteraja.id/tracking?awb=${r}` },
+      pos: { name: 'POS Indonesia', url: (r) => `https://www.posindonesia.co.id/id/tracking/${r}` },
+      ninja: { name: 'Ninja Xpress', url: (r) => `https://www.ninjaxpress.co/id-id/tracking?id=${r}` },
+      lion: { name: 'Lion Parcel', url: (r) => `https://lionparcel.com/track/stt?q=${r}` },
+      idexpress: { name: 'ID Express', url: (r) => `https://idexpress.com/tracking?waybillNo=${r}` },
+      tiki: { name: 'TIKI', url: (r) => `https://www.tiki.id/id/tracking` }
+    };
+
+    const resiInput = document.getElementById('resiInput');
+    const courierSelect = document.getElementById('courierSelect');
+    const packageLabelInput = document.getElementById('packageLabel');
+    const clearResiBtn = document.getElementById('clearResiBtn');
+    const autoDetectBadge = document.getElementById('autoDetectBadge');
+    const weightGramInput = document.getElementById('weightGram');
+
+    let detectedClipboardResi = '';
+    let lastDismissedResi = '';
+
+    const displayVersion = CURRENT_VERSION.includes('APP_VERSION') ? 'v1.0-dev' : CURRENT_VERSION;
+    document.getElementById('modalVersionText').textContent = displayVersion;
+
+    // Switch Tab
+    function switchTab(tab) {
+      const isResi = tab === 'resi';
+      document.getElementById('panelResi').classList.toggle('hidden', !isResi);
+      document.getElementById('panelOngkir').classList.toggle('hidden', isResi);
+
+      const activeClass = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20';
+      const inactiveClass = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white';
+
+      document.getElementById('tabBtnResi').className = isResi ? activeClass : inactiveClass;
+      document.getElementById('tabBtnOngkir').className = !isResi ? activeClass : inactiveClass;
+    }
+
+    // Deteksi kurir dari pola nomor resi
+    function detectCourierFromResi(raw) {
+      const code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (!code || code.length < 6) return null;
+
+      if (/^(JP|JX)\d+/.test(code)) return 'jnt';
+      if (/^SPX/.test(code)) return 'spx';
+      if (/^1000\d{8,}/.test(code)) return 'anteraja';
+      if (/^(00|01|02|03|04)\d{10}$/.test(code)) return 'sicepat';
+      if (/^(NLID|NVID)/.test(code)) return 'ninja';
+      if (/^(11LP|99LP|88LP)/.test(code)) return 'lion';
+      if (/^IDE/.test(code)) return 'idexpress';
+      if (/^(030|660)\d{9}$/.test(code)) return 'tiki';
+      if (/^P\d{10,}/.test(code)) return 'pos';
+      if (/^[0-9]{12,16}$/.test(code) || /^[A-Z]{2,4}\d{8,}/.test(code)) return 'jne';
+
+      return null;
+    }
+
+    resiInput.addEventListener('input', () => {
+      const val = resiInput.value.trim();
+      clearResiBtn.classList.toggle('hidden', val.length === 0);
+
+      const detected = detectCourierFromResi(val);
+      if (detected && COURIERS[detected]) {
+        courierSelect.value = detected;
+        autoDetectBadge.classList.remove('hidden');
+      } else {
+        autoDetectBadge.classList.add('hidden');
+      }
+    });
+
+    function clearResiInput() {
+      resiInput.value = '';
+      clearResiBtn.classList.add('hidden');
+      autoDetectBadge.classList.add('hidden');
+      resiInput.focus();
+    }
+
+    weightGramInput.addEventListener('input', () => {
+      const g = parseFloat(weightGramInput.value) || 0;
+      document.getElementById('weightKgPreview').textContent = `${(g / 1000).toFixed(1)} Kg`;
+    });
+
+    function setWeight(grams) {
+      weightGramInput.value = grams;
+      document.getElementById('weightKgPreview').textContent = `${(grams / 1000).toFixed(1)} Kg`;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2500);
+    }
+
+    function openInfoModal() {
+      document.getElementById('infoModal').classList.remove('hidden');
+    }
+
+    function closeInfoModal(event) {
+      if (!event || event.target.id === 'infoModal') {
+        document.getElementById('infoModal').classList.add('hidden');
+      }
+    }
+
+    // Smart Auto-Detect Resi dari Clipboard
+    async function checkClipboardAutoDetect() {
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.readText) return;
+        const text = await navigator.clipboard.readText();
+        if (!text) return;
+
+        const clean = text.trim().toUpperCase().replace(/\s+/g, '');
+        if (/^[A-Z0-9]{8,22}$/.test(clean) && /\d{5,}/.test(clean)) {
+          if (clean === lastDismissedResi || resiInput.value.trim().toUpperCase() === clean) return;
+
+          detectedClipboardResi = clean;
+          const courierKey = detectCourierFromResi(clean);
+          const courierLabel = courierKey ? `Resi ${COURIERS[courierKey].name} Terdeteksi` : 'Nomor Resi Terdeteksi';
+
+          document.getElementById('detectedCourierLabel').textContent = courierLabel;
+          document.getElementById('detectedResiText').textContent = clean;
+          document.getElementById('clipboardSuggestion').classList.remove('hidden');
+        }
+      } catch (e) {}
+    }
+
+    function applyDetectedClipboard() {
+      if (!detectedClipboardResi) return;
+      resiInput.value = detectedClipboardResi;
+      resiInput.dispatchEvent(new Event('input'));
+      document.getElementById('clipboardSuggestion').classList.add('hidden');
+      showToast('Nomor resi diterapkan');
+    }
+
+    function dismissClipboardSuggestion() {
+      lastDismissedResi = detectedClipboardResi;
+      document.getElementById('clipboardSuggestion').classList.add('hidden');
+    }
+
+    async function pasteResi() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          resiInput.value = text.trim().toUpperCase();
+          resiInput.dispatchEvent(new Event('input'));
+          document.getElementById('clipboardSuggestion').classList.add('hidden');
+          showToast('Resi berhasil ditempel');
+        } else {
+          showToast('Clipboard kosong');
+        }
+      } catch (err) {
+        showToast('Tempel manual di kolom resi ya');
+      }
+    }
+
+    // Lacak Paket (Auto Copy Resi + Simpan Riwayat + Buka Jalur Resmi)
+    async function trackPackage(customResi = null, customCourier = null, customLabel = null) {
+      const resi = (customResi || resiInput.value).trim().toUpperCase().replace(/\s+/g, '');
+      const courier = customCourier || courierSelect.value;
+      const label = customLabel !== null ? customLabel : packageLabelInput.value.trim();
+
+      if (!resi || resi.length < 6) {
+        showToast('Masukkan nomor resi yang valid');
+        resiInput.focus();
+        return;
+      }
+
+      // Salin resi otomatis ke clipboard agar mudah ditempel jika halaman kurir meminta input
+      try {
+        await navigator.clipboard.writeText(resi);
+      } catch (e) {}
+
+      saveHistory(resi, courier, label);
+      showToast(`Resi ${resi} disalin & membuka pelacakan...`);
+
+      const targetUrl = COURIERS[courier] ? COURIERS[courier].url(resi) : `https://www.google.com/search?q=cek+resi+${resi}`;
+      setTimeout(() => {
+        window.open(targetUrl, '_system');
+      }, 350);
+    }
+
+    // Cek Ongkir Multi Kurir (100% Free Unlimited)
+    function checkOngkirAll() {
+      const origin = document.getElementById('originCity').value.trim();
+      const dest = document.getElementById('destCity').value.trim();
+      const weight = parseInt(weightGramInput.value) || 1000;
+
+      if (!origin || !dest) {
+        showToast('Isi kota asal dan tujuan terlebih dahulu');
+        return;
+      }
+
+      const kg = Math.max(1, Math.ceil(weight / 1000));
+      const query = encodeURIComponent(`cek ongkir ${origin} ke ${dest} ${kg} kg jne jnt sicepat`);
+      window.open(`https://www.google.com/search?q=${query}`, '_system');
+    }
+
+    function openOfficialRate(url) {
+      window.open(url, '_system');
+    }
+
+    function saveHistory(resi, courier, label) {
+      let history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      const existing = history.find(item => item.resi === resi);
+      const finalLabel = label || (existing ? existing.label : '');
+
+      history = history.filter(item => item.resi !== resi);
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) + ' • ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      history.unshift({ resi, courier, label: finalLabel, time: dateStr });
+      if (history.length > 15) history.pop();
+
+      localStorage.setItem('cek_paket_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function deleteHistoryItem(event, resi) {
+      event.stopPropagation();
+      let history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      history = history.filter(item => item.resi !== resi);
+      localStorage.setItem('cek_paket_history',
