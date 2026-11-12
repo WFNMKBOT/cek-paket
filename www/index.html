@@ -70,14 +70,13 @@
         <div class="truncate">
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-[17px] tracking-tight text-white">Cek Paket</h1>
-            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20"></span>
           </div>
           <p class="text-xs text-slate-400 mt-0.5 truncate">Lacak resi & tarif ongkir tanpa batas</p>
         </div>
       </div>
 
       <!-- Tombol Info Developer & Versi -->
-      <button onclick="openInfoModal()" class="relative w-9 h-9 shrink-0 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-slate-300 hover:text-amber-400 flex items-center justify-center transition active:scale-95" title="Info Developer & Versi">
+      <button type="button" onclick="openInfoModal()" class="relative w-9 h-9 shrink-0 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-slate-300 hover:text-amber-400 flex items-center justify-center transition active:scale-95" title="Info Developer & Versi">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -113,14 +112,14 @@
 
     <!-- Switcher Tab: Lacak Resi vs Cek Ongkir -->
     <div class="grid grid-cols-2 gap-1.5 p-1.5 bg-[#0d121c] border border-white/[0.07] rounded-2xl">
-      <button id="tabBtnResi" onclick="switchTab('resi')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20">
+      <button type="button" id="tabBtnResi" onclick="switchTab('resi')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
         <span>Lacak Resi</span>
       </button>
-      <button id="tabBtnOngkir" onclick="switchTab('ongkir')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white">
+      <button type="button" id="tabBtnOngkir" onclick="switchTab('ongkir')" class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <rect x="1" y="3" width="15" height="13"></rect>
           <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
@@ -145,10 +144,10 @@
             </div>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="applyDetectedClipboard()" class="bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl transition">
+            <button type="button" onclick="applyDetectedClipboard()" class="bg-amber-400 hover:bg-amber-300 active:scale-95 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl transition">
               Pakai
             </button>
-            <button onclick="dismissClipboardSuggestion()" class="p-1.5 text-slate-400 hover:text-white rounded-lg transition">
+            <button type="button" onclick="dismissClipboardSuggestion()" class="p-1.5 text-slate-400 hover:text-white rounded-lg transition">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -161,7 +160,7 @@
         <div>
           <div class="flex justify-between items-center mb-2">
             <label for="resiInput" class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Nomor Resi</label>
-            <button onclick="pasteResi()" class="text-xs font-medium text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1.5 active:scale-95 transition-all">
+            <button type="button" onclick="pasteResi()" class="text-xs font-medium text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1.5 active:scale-95 transition-all">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -178,7 +177,7 @@
               autocomplete="off"
               class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 focus:ring-4 focus:ring-amber-500/10 rounded-2xl py-3.5 px-4 pr-11 font-mono text-[15px] uppercase tracking-wider text-white placeholder-slate-600 outline-none transition-all shadow-inner"
             >
-            <button onclick="clearResiInput()" id="clearResiBtn" class="hidden absolute right-3 w-7 h-7 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+            <button type="button" onclick="clearResiInput()" id="clearResiBtn" class="hidden absolute right-3 w-7 h-7 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -229,6 +228,7 @@
 
         <!-- Tombol Lacak -->
         <button 
+          type="button"
           onclick="trackPackage()" 
           class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 px-6 rounded-2xl shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-[14px]"
         >
@@ -247,7 +247,7 @@
             <h2 class="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Paket Tersimpan</h2>
             <span id="historyCount" class="hidden text-[10px] font-mono bg-white/[0.06] text-slate-400 px-1.5 py-0.5 rounded-md">0</span>
           </div>
-          <button onclick="clearHistory()" id="clearHistoryBtn" class="hidden text-xs font-medium text-rose-400/90 hover:text-rose-300 transition">
+          <button type="button" onclick="clearHistory()" id="clearHistoryBtn" class="hidden text-xs font-medium text-rose-400/90 hover:text-rose-300 transition">
             Bersihkan
           </button>
         </div>
@@ -294,14 +294,15 @@
             class="w-full bg-[#070a10] border border-white/[0.08] focus:border-amber-500/60 rounded-2xl py-3 px-4 font-mono text-sm text-white outline-none transition-all shadow-inner"
           >
           <div class="flex gap-2 pt-2.5 overflow-x-auto no-scrollbar">
-            <button onclick="setWeight(500)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">500g</button>
-            <button onclick="setWeight(1000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">1 Kg</button>
-            <button onclick="setWeight(2000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">2 Kg</button>
-            <button onclick="setWeight(5000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">5 Kg</button>
+            <button type="button" onclick="setWeight(500)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">500g</button>
+            <button type="button" onclick="setWeight(1000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">1 Kg</button>
+            <button type="button" onclick="setWeight(2000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">2 Kg</button>
+            <button type="button" onclick="setWeight(5000)" class="shrink-0 text-xs bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 px-3 py-1 rounded-lg border border-white/[0.07]">5 Kg</button>
           </div>
         </div>
 
         <button 
+          type="button"
           onclick="checkOngkirAll()" 
           class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 px-6 rounded-2xl shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-[14px]"
         >
@@ -316,12 +317,12 @@
         <div class="pt-2 border-t border-white/[0.06]">
           <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-500 mb-2.5">Atau Langsung ke Web Tarif Resmi:</p>
           <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
-            <button onclick="openOfficialRate('https://jet.co.id/rates')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">J&T</button>
-            <button onclick="openOfficialRate('https://www.jne.co.id/id/tracking/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">JNE</button>
-            <button onclick="openOfficialRate('https://www.sicepat.com/deliveryFee')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">SiCepat</button>
-            <button onclick="openOfficialRate('https://anteraja.id/cek-ongkir')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Anteraja</button>
-            <button onclick="openOfficialRate('https://www.posindonesia.co.id/id/check-tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">POS</button>
-            <button onclick="openOfficialRate('https://lionparcel.com/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Lion</button>
+            <button type="button" onclick="openOfficialRate('https://jet.co.id/rates')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">J&T</button>
+            <button type="button" onclick="openOfficialRate('https://www.jne.co.id/id/tracking/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">JNE</button>
+            <button type="button" onclick="openOfficialRate('https://www.sicepat.com/deliveryFee')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">SiCepat</button>
+            <button type="button" onclick="openOfficialRate('https://anteraja.id/cek-ongkir')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Anteraja</button>
+            <button type="button" onclick="openOfficialRate('https://www.posindonesia.co.id/id/check-tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">POS</button>
+            <button type="button" onclick="openOfficialRate('https://lionparcel.com/tarif')" class="bg-white/[0.04] hover:bg-white/[0.09] border border-white/[0.07] py-2 rounded-xl text-slate-200 transition">Lion</button>
           </div>
         </div>
       </div>
@@ -331,7 +332,7 @@
 
   <!-- Footer Minimalis -->
   <footer class="py-5 px-5 text-center border-t border-white/[0.04]">
-    <button onclick="openInfoModal()" class="inline-flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 transition">
+    <button type="button" onclick="openInfoModal()" class="inline-flex items-center gap-1.5 text-[11px] text-slate-500 hover:text-slate-300 transition">
       <span>Developed by</span>
       <span class="font-semibold text-amber-400/90">Wahyu Firman Nugraha</span>
       <span class="text-slate-600">•</span>
@@ -356,12 +357,11 @@
           <div>
             <div class="flex items-center gap-2">
               <h3 class="font-bold text-base text-white">Cek Paket</h3>
-              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">100% FREE</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">Lacak Resi & Cek Ongkir Instan</p>
           </div>
         </div>
-        <button onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition">
+        <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-400 hover:text-white flex items-center justify-center transition">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -391,7 +391,7 @@
       </div>
 
       <div class="flex gap-2.5">
-        <button onclick="closeInfoModal(); checkAppUpdate(true);" class="flex-1 bg-white/[0.06] hover:bg-white/[0.1] active:scale-[0.98] text-slate-200 border border-white/[0.08] font-semibold py-2.5 px-3 rounded-xl text-xs transition">
+        <button type="button" onclick="closeInfoModal(); checkAppUpdate(true);" class="flex-1 bg-white/[0.06] hover:bg-white/[0.1] active:scale-[0.98] text-slate-200 border border-white/[0.08] font-semibold py-2.5 px-3 rounded-xl text-xs transition">
           Cek Update
         </button>
         <a href="https://github.com/WFNMKBOT/cek-paket" target="_system" class="flex-1 bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-bold py-2.5 px-3 rounded-xl text-xs text-center transition">
@@ -413,7 +413,7 @@
 
     const COURIERS = {
       jnt: { name: 'J&T Express', url: (r) => `https://jet.co.id/track?bills=${r}` },
-      jne: { name: 'JNE Express', url: (r) => `https://www.jne.co.id/id/tracking/trace` },
+      jne: { name: 'JNE Express', url: () => `https://www.jne.co.id/id/tracking/trace` },
       spx: { name: 'SPX Express', url: (r) => `https://spx.co.id/detail/${r}` },
       sicepat: { name: 'SiCepat', url: (r) => `https://www.sicepat.com/checkAwb?awb=${r}` },
       anteraja: { name: 'Anteraja', url: (r) => `https://anteraja.id/tracking?awb=${r}` },
@@ -421,7 +421,7 @@
       ninja: { name: 'Ninja Xpress', url: (r) => `https://www.ninjaxpress.co/id-id/tracking?id=${r}` },
       lion: { name: 'Lion Parcel', url: (r) => `https://lionparcel.com/track/stt?q=${r}` },
       idexpress: { name: 'ID Express', url: (r) => `https://idexpress.com/tracking?waybillNo=${r}` },
-      tiki: { name: 'TIKI', url: (r) => `https://www.tiki.id/id/tracking` }
+      tiki: { name: 'TIKI', url: () => `https://www.tiki.id/id/tracking` }
     };
 
     const resiInput = document.getElementById('resiInput');
@@ -437,7 +437,6 @@
     const displayVersion = CURRENT_VERSION.includes('APP_VERSION') ? 'v1.0-dev' : CURRENT_VERSION;
     document.getElementById('modalVersionText').textContent = displayVersion;
 
-    // Switch Tab
     function switchTab(tab) {
       const isResi = tab === 'resi';
       document.getElementById('panelResi').classList.toggle('hidden', !isResi);
@@ -450,7 +449,6 @@
       document.getElementById('tabBtnOngkir').className = !isResi ? activeClass : inactiveClass;
     }
 
-    // Deteksi kurir dari pola nomor resi
     function detectCourierFromResi(raw) {
       const code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
       if (!code || code.length < 6) return null;
@@ -518,7 +516,6 @@
       }
     }
 
-    // Smart Auto-Detect Resi dari Clipboard
     async function checkClipboardAutoDetect() {
       try {
         if (!navigator.clipboard || !navigator.clipboard.readText) return;
@@ -569,7 +566,6 @@
       }
     }
 
-    // Lacak Paket (Auto Copy Resi + Simpan Riwayat + Buka Jalur Resmi)
     async function trackPackage(customResi = null, customCourier = null, customLabel = null) {
       const resi = (customResi || resiInput.value).trim().toUpperCase().replace(/\s+/g, '');
       const courier = customCourier || courierSelect.value;
@@ -581,7 +577,6 @@
         return;
       }
 
-      // Salin resi otomatis ke clipboard agar mudah ditempel jika halaman kurir meminta input
       try {
         await navigator.clipboard.writeText(resi);
       } catch (e) {}
@@ -595,7 +590,14 @@
       }, 350);
     }
 
-    // Cek Ongkir Multi Kurir (100% Free Unlimited)
+    function trackFromHistory(index) {
+      const history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      const item = history[index];
+      if (item) {
+        trackPackage(item.resi, item.courier, item.label || '');
+      }
+    }
+
     function checkOngkirAll() {
       const origin = document.getElementById('originCity').value.trim();
       const dest = document.getElementById('destCity').value.trim();
@@ -615,6 +617,16 @@
       window.open(url, '_system');
     }
 
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, (m) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
+    }
+
     function saveHistory(resi, courier, label) {
       let history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
       const existing = history.find(item => item.resi === resi);
@@ -632,8 +644,138 @@
       renderHistory();
     }
 
-    function deleteHistoryItem(event, resi) {
+    function deleteHistoryItem(event, index) {
       event.stopPropagation();
       let history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
-      history = history.filter(item => item.resi !== resi);
-      localStorage.setItem('cek_paket_history',
+      history.splice(index, 1);
+      localStorage.setItem('cek_paket_history', JSON.stringify(history));
+      renderHistory();
+      showToast('Resi dihapus dari daftar');
+    }
+
+    async function copySingleResi(event, index) {
+      event.stopPropagation();
+      const history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      const item = history[index];
+      if (!item) return;
+      try {
+        await navigator.clipboard.writeText(item.resi);
+        showToast(`Resi ${item.resi} disalin!`);
+      } catch (e) {}
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('cek_paket_history') || '[]');
+      const listEl = document.getElementById('historyList');
+      const clearBtn = document.getElementById('clearHistoryBtn');
+      const countEl = document.getElementById('historyCount');
+
+      clearBtn.classList.toggle('hidden', history.length === 0);
+      countEl.classList.toggle('hidden', history.length === 0);
+      countEl.textContent = history.length;
+
+      if (history.length === 0) {
+        listEl.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-white/[0.08] rounded-2xl bg-white/[0.01] text-center">
+            <div class="w-9 h-9 rounded-full bg-white/[0.04] flex items-center justify-center text-slate-500 mb-2">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+            </div>
+            <p class="text-xs font-medium text-slate-400">Belum ada paket tersimpan</p>
+            <p class="text-[11px] text-slate-600 mt-0.5">Resi yang pernah dilacak akan muncul di sini</p>
+          </div>`;
+        return;
+      }
+
+      listEl.innerHTML = history.map((item, idx) => {
+        const courierName = COURIERS[item.courier] ? COURIERS[item.courier].name : item.courier.toUpperCase();
+        const safeLabel = item.label ? escapeHtml(item.label) : '';
+        const safeResi = escapeHtml(item.resi);
+        return `
+          <div onclick="trackFromHistory(${idx})" class="group bg-[#0d121c]/90 hover:bg-[#131a29] border border-white/[0.06] hover:border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between gap-2 cursor-pointer active:scale-[0.99] transition-all">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">${courierName}</span>
+                ${safeLabel ? `<span class="text-xs font-semibold text-white truncate">${safeLabel}</span>` : ''}
+              </div>
+              <div class="flex items-center gap-2 mt-1.5">
+                <p class="font-mono text-xs font-medium text-slate-200 tracking-wide truncate">${safeResi}</p>
+                <button type="button" onclick="copySingleResi(event, ${idx})" class="text-slate-500 hover:text-amber-400 p-0.5" title="Salin Resi">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-500 mt-1">${escapeHtml(item.time)}</p>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <span class="text-xs font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-1.5 rounded-lg group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">Lacak</span>
+              <button type="button" onclick="deleteHistoryItem(event, ${idx})" class="p-1.5 text-slate-600 hover:text-rose-400 rounded-lg transition" title="Hapus">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('cek_paket_history');
+      renderHistory();
+      showToast('Semua riwayat paket dihapus');
+    }
+
+    async function checkAppUpdate(manual = false) {
+      if (CURRENT_VERSION.includes('APP_VERSION')) {
+        if (manual) showToast('Mode preview lokal');
+        return;
+      }
+
+      try {
+        if (manual) showToast('Mengecek pembaruan...');
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/releases/latest`, {
+          cache: 'no-store'
+        });
+        if (!response.ok) return;
+
+        const data = await response.json();
+        const latestTag = data.tag_name;
+
+        if (latestTag && latestTag !== CURRENT_VERSION) {
+          const apkAsset = data.assets && data.assets.find(asset => asset.name.endsWith('.apk'));
+          const downloadUrl = apkAsset ? apkAsset.browser_download_url : data.html_url;
+
+          document.getElementById('latestVersionText').textContent = latestTag;
+          const btn = document.getElementById('downloadUpdateBtn');
+          btn.href = downloadUrl;
+          btn.onclick = (e) => {
+            e.preventDefault();
+            window.open(downloadUrl, '_system');
+          };
+
+          document.getElementById('updateBanner').classList.remove('hidden');
+          document.getElementById('updateDot').classList.remove('hidden');
+          if (manual) showToast(`Versi baru ${latestTag} tersedia!`);
+        } else {
+          if (manual) showToast('Aplikasi sudah versi terbaru');
+        }
+      } catch (err) {
+        if (manual) showToast('Gagal mengecek update');
+      }
+    }
+
+    renderHistory();
+    checkAppUpdate(false);
+    checkClipboardAutoDetect();
+    window.addEventListener('focus', checkClipboardAutoDetect);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkClipboardAutoDetect();
+    });
+  </script>
+</body>
+</html>
